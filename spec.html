@@ -1,10 +1,10 @@
 <!doctype html>
 <meta charset="utf8">
-<title>Ecmarkup</title>
+<title>SIMD.js value semantics proposal</title>
 <link rel="stylesheet" href="./elements.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <emu-biblio href="./biblio.json"></emu-biblio>
-<h1>Ecmarkup Documentation</h1>
+<h1>SIMD.js value semantics proposal</h1>
 <emu-intro id="intro">
 <h1>Introduction</h1>
 <p>
@@ -28,4 +28,201 @@ Related links:
 <li><a href="https://github.com/johnmccutchan/ecmascript_simd/issues/157">Bug about SIMD.js value semantics</a></li>
 </ul>
 </emu-intro>
+<h2>6.1 ECMAScript language types</h2>
+<h4>6.1.7.4 Well-Known Intrinsic Objects</h4>
+<p>
+<strong>Intrinsic name</strong>: %SIMD%
+<br/>
+<strong>Global name</strong>: SIMD
+<br/>
+<strong>ECMAScript Language Association</strong>: The SIMD object (27)
+</p>
 
+<p>
+<strong>Intrinsic name</strong>: %SIMDFloat32x4%
+<br/>
+<strong>Global name</strong>: SIMD.Float32x4
+<br/>
+<strong>ECMAScript Language Association</strong>: The SIMD.Float32x4 constructor (27.1.1)
+</p>
+
+<p>
+Intrinsic name: %SIMDFloat32x4Prototype%
+<br/>
+Global name: SIMD.Float32x4.prototype
+<br/>
+ECMAScript Language Association: The initial value of the prototype data property of %SIMDFLoat32x4% (27.1.2)
+</p>
+
+<h3>6.1.8 SIMD types</h3>
+
+<h4>6.1.8.1 Float32x4</h4>
+
+<p>
+Float32x4 is a SIMD type representing four 32-bit floating point values. Float32x4 values can be created using the [[Call]] operation on the SIMD.Float32x4 object, described in 27.1.1.
+</p>
+
+<h1>7 Abstract Operations</h1>
+
+<h2>7.1 Type Conversion</h2>
+
+<emu-clause id="to-primitive">
+<h3>7.1.1 ToPrimitive ( input [, PreferredType] )</h3>
+
+<strong>Argument type</strong>: Float32x4
+<br/>
+<strong>Result</strong>: return input
+
+<emu-note>
+An additional option considered is to define this as calling ToObject on it, and then ToPrimitive on the resulting wrapper object. This would have the advantage of allowing toString and valueOf be defined on the wrapper prototype, which seems more realistic to me as a path for value types.
+</emu-note>
+</emu-clause>
+
+<emu-clause id="to-boolean">
+<h3>7.1.2 ToBoolean ( argument )</h3>
+
+<strong>Argument type</strong>: Float32x4
+<br/>
+<strong>Result</strong>: return true
+
+<emu-note>
+Even if it would be consistent to return false if it is all zero, there probably isn't much gain from adding more falsy values.
+</emu-note>
+</emu-clause>
+
+<emu-clause id="to-number">
+<h3>7.1.3 ToNumber ( argument )</h3>
+
+<strong>Argument type</strong>: Float32x4
+</br>
+<strong>Result</strong>: throw a TypeError exception
+</emu-clause>
+
+<emu-clause id="to-string">
+<h3>7.1.12 ToString ( argument )</h3>
+
+<strong>Argument type</strong>: Float32x4
+<br/>
+<strong>Result</strong>: Return "SIMD.Float32x4(" + ToString(ExtractLane(argument, 0)) + ", " + ToString(ExtractLane(argument, 1)) + ", " + ToString(ExtractLane(argument, 2)) + ", " + ToString(ExtractLane(argument, 3))  + ")"
+
+<emu-note>An alternative would be to call ToObject and let the wrapper handle ToString the way it works for objects.</emu-note>
+</emu-clause>
+
+<emu-clause id="to-object">
+<h3>7.1.13 ToObject ( argument )</h3>
+
+<strong>Argument type</strong>: Float32x4
+<br/>
+<strong>Result</strong>: Return a new %SIMDFloat32x4% object whose [[Float32x4Data]] internal slot is set to argument. See 27.1 for a description of %SIMDFloat32x4% objects.
+</emu-clause>
+
+<emu-clause id="require-object-coercible">
+<h3>7.2.1 RequireObjectCoercible ( argument )</h3>
+
+<strong>Argument type</strong>: Float32x4
+<br/>
+<strong>Result</strong>: return argument
+</emu-clause>
+
+7.2.9 SameValue(x, y)
+(extra step)
+11. If Type(x) is Float32x4, then
+a. If SameValue(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValue(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValue(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValue(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+
+7.2.10 SameValueZero(x, y)
+(extra step)
+11. If Type(x) is Float32x4, then
+a. If SameValueZero(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValueZero(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValueZero(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValueZero(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+
+7.2.11 Abstract relational comparison
+NOTE: No changes needed for SIMD; it will just compare them as strings with the current defintion.
+
+7.2.12 Abstract Equality Comparison
+In step 10: If Type(x) is either String, Number, Symbol, or Float32x4, and Type(y) is Object, then
+return the result of the comparison x == ToPrimitive(y).
+
+7.2.13 Strict Equality Comparison
+
+9 If Type(x) is Float32x4, then
+
+a. If x.[[Float32x4X]] === y.[[Float32x4X]] and x.[[Float32x4Y]] === y.[[Float32x4Y]] and x.[[Float32x4Z]] === y.[[Float32x4Z]] and x.[[Float32x4W]] === y.[[Float32x4W]], return true
+b. Else, return false
+
+12.5.6 The typeof Operator
+
+12.5.6.1 Runtime Semantics: Evaluation
+
+Type of val: Float32x4
+Result: "float32x4"
+
+18.3 Constructor properties of the global object
+
+18.3.34 Float32x4
+
+See 27.1
+
+27 SIMD objects
+
+The SIMD global object has several constructor properties, one for each SIMD type
+
+27.1 Float32x4 objects
+
+NOTE: As with Boolean, String, etc, this is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function.
+
+27.1.1 The Float32x4 constructor
+
+NOTE: The Float32x4 constructor reachable from the global object as SIMD.Float32x4. It is sometimes referred to in this spec as %SIMDFloat32x4% to reduce ambiguity and emphasize that, even if the SIMD object is modified or shadowed, references in this spec refer to the original binding.
+
+27.1.1.1 Float32x4( value )
+
+This description applies if Float32x4 is called with exactly one argument.
+
+1. If NewTarget is undefined, throw a ReferenceError (NB: TypeError)?
+1. If value is not of the type Float32x4, throw a TypeError
+1. Let O be OrdinaryCreateFromConstructor(NewTarget, "%SIMDFloat32x4Prototype%", «[[Float32x4Data]]» ).
+1. ReturnIfAbrupt(O).
+1. Set the value of O’s [[Float32x4Data]] internal slot to n.
+1. Return O.
+
+27.1.1.2 Float32x4( x, y, z, w )
+
+This description applies if Float32x4 is called with exactly four arguments. If it is called with a different number of arguments from one or four, throw a TypeError (NB: Or, call this version, with some things being undefined and/or some values ignored?)
+
+1. Let xf be ToFloat32(x)
+1. ReturnIfAbrupt(xf)
+1. Let yf be ToFloat32(y)
+1. ReturnIfAbrupt(yf)
+1. Let xf be ToFloat32(z)
+1. ReturnIfAbrupt(zf)
+1. Let yf be ToFloat32(w)
+1. ReturnIfAbrupt(wf)
+1. Return a Float32x4 primitive with the internal slots { [[Float32x4X]]: xf, [[Float32x4Y]]: yf, [[Float32x4Z]]: zf, [[Float32x4W]]: wf}
+
+27.1.1.3 SIMD.Float32x4.extractLane(t, i)
+
+1. If Type(t) is not Float32x4, throw a TypeError exception
+1. Let index be ToNumber(i)
+1. If i is 0, return t.[[Float32x4X]]
+1. If i is 1, return t.[[Float32x4Y]]
+1. If i is 2, return t.[[Float32x4Z]]
+1. If i is 3, return t.[[Float32x4W]]
+1. Else, return ReferenceError
+
+27.1.1.3 SIMD.Float32x4.add(a, b) 
+
+1. If Type(a) is not Float32x4 or Type(b) is not Float32x4, throw a TypeError exception
+1. Return a Float32 with the internal slots {[[Float32x4X]]: ToFloat32(a.[[Float32x4X]] + b.[[Float32x4X]]), [[Float32x4Y]]: ToFloat32(a.[[Float32x4Y]] + b.[[Float32x4Y]]), [[Float32x4Z]]: ToFloat32(a.[[Float32x4Z]] + b.[[Float32x4Z]]), [[Float32x4W]]: ToFloat32(a.[[Float32x4W]] + b.[[Float32x4W]])}
+
+27.1.1.3 splat
+
+27.1.1.3 replaceLane
+
+27.1.1.3 check
+
+27.1.2 The SIMD.Float32x4.prototype
+
+NOTE: Previously, if accessors like x were included, these would be spec'd as getters (with null setter) on the SIMD.Float32x4.prototype . However, they have been removed in favor of SIMD.Float32x4.extractLane. Are there any non-trivial properties? Users could add methods like .add() here if they want to use SIMD in an object-oriented way.
+
+27.1.2.1 SIMD.Float32x4.prototype.constructor
+
+The initial value of SIMD.Float32x4.prototype.constructor is the intrinsic object %SIMDFloat32x4%

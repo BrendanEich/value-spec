@@ -20,6 +20,10 @@ Ideally, SIMD values will fit into a larger value types proposal. Such a proposa
 </p>
 
 <p>
+Many parts of this spec edit existing parts of the ES6 spec. Although ecmarkup generates numbering at the beginning of headers, these won't correspond to the numbering within the existing ECMA spec, so I've included a matching numbering in parentheses afterwards, referring to the ES6 spec. I also intend to add crossreferencing links where appropriate.
+</p>
+
+<p>
 Related links:
 </p>
 <ul>
@@ -28,8 +32,11 @@ Related links:
 <li><a href="https://github.com/johnmccutchan/ecmascript_simd/issues/157">Bug about SIMD.js value semantics</a></li>
 </ul>
 </emu-intro>
-<h2>6.1 ECMAScript language types</h2>
-<h4>6.1.7.4 Well-Known Intrinsic Objects</h4>
+
+<emu-clause id="all-types">
+<h1>ECMAScript language types (6.1)</h1>
+<emu-clause id="intrinsics">
+<h1>Well-Known Intrinsic Objects (6.1.7.4)</h1>
 <p>
 <strong>Intrinsic name</strong>: %SIMD%
 <br/>
@@ -53,21 +60,25 @@ Global name: SIMD.Float32x4.prototype
 <br/>
 ECMAScript Language Association: The initial value of the prototype data property of %SIMDFLoat32x4% (27.1.2)
 </p>
+</emu-clause>
 
-<h3>6.1.8 SIMD types</h3>
-
-<h4>6.1.8.1 Float32x4</h4>
+<emu-clause id="types">
+<h1>SIMD types (6.1.8)</h1>
+<emu-clause id="type">
+<h1>Float32x4 (6.1.8.1)</h1>
 
 <p>
 Float32x4 is a SIMD type representing four 32-bit floating point values. Float32x4 values can be created using the [[Call]] operation on the SIMD.Float32x4 object, described in 27.1.1.
 </p>
+</emu-clause>
+</emu-clause>
 
-<h1>7 Abstract Operations</h1>
+<h1>Abstract Operations (7)</h1>
 
-<h2>7.1 Type Conversion</h2>
+<h1>Type Conversion (7.1)</h1>
 
 <emu-clause id="to-primitive">
-<h3>7.1.1 ToPrimitive ( input [, PreferredType] )</h3>
+<h1>ToPrimitive ( input [, PreferredType] ) (7.1.1)</h1>
 
 <strong>Argument type</strong>: Float32x4
 <br/>
@@ -79,7 +90,7 @@ An additional option considered is to define this as calling ToObject on it, and
 </emu-clause>
 
 <emu-clause id="to-boolean">
-<h3>7.1.2 ToBoolean ( argument )</h3>
+<h1>ToBoolean ( argument ) (7.1.2)</h1>
 
 <strong>Argument type</strong>: Float32x4
 <br/>
@@ -91,7 +102,7 @@ Even if it would be consistent to return false if it is all zero, there probably
 </emu-clause>
 
 <emu-clause id="to-number">
-<h3>7.1.3 ToNumber ( argument )</h3>
+<h1>ToNumber ( argument ) (7.1.3)</h1>
 
 <strong>Argument type</strong>: Float32x4
 </br>
@@ -99,7 +110,7 @@ Even if it would be consistent to return false if it is all zero, there probably
 </emu-clause>
 
 <emu-clause id="to-string">
-<h3>7.1.12 ToString ( argument )</h3>
+<h1>ToString ( argument ) (7.1.12)</h1>
 
 <strong>Argument type</strong>: Float32x4
 <br/>
@@ -109,7 +120,7 @@ Even if it would be consistent to return false if it is all zero, there probably
 </emu-clause>
 
 <emu-clause id="to-object">
-<h3>7.1.13 ToObject ( argument )</h3>
+<h1>ToObject ( argument ) (7.1.13)</h1>
 
 <strong>Argument type</strong>: Float32x4
 <br/>
@@ -117,7 +128,7 @@ Even if it would be consistent to return false if it is all zero, there probably
 </emu-clause>
 
 <emu-clause id="require-object-coercible">
-<h3>7.2.1 RequireObjectCoercible ( argument )</h3>
+<h1>RequireObjectCoercible ( argument ) (7.2.1)</h1>
 
 <strong>Argument type</strong>: Float32x4
 <br/>
@@ -125,16 +136,16 @@ Even if it would be consistent to return false if it is all zero, there probably
 </emu-clause>
 
 <emu-clause id="same-value">
-<h3>7.2.9 SameValue(x, y)</h3>
+<h1>SameValue(x, y) (7.2.9)</h1>
 Add an extra step at the bottom of the definition of SameValue for the new case involving the new type:
 <emu-alg>
 11. If Type(x) is Float32x4, then
-a. If SameValue(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValue(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValue(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValue(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+  1. If SameValue(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValue(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValue(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValue(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="same-value-zero">
-<h3>7.2.10 SameValueZero(x, y)</h3>
+<h1>SameValueZero(x, y) (7.2.10)</h1>
 Add an extra step at the bottom of the definition of SameValue for the new case involving the new type:
 <emu-alg>
 11. If Type(x) is Float32x4, then
@@ -143,21 +154,20 @@ Add an extra step at the bottom of the definition of SameValue for the new case 
 </emu-clause>
 
 <emu-clause id="abstract-relational-comparison">
-<h3>7.2.11 Abstract relational comparison</h3>
+<h1>Abstract relational comparison (7.2.11)</h1>
 <emu-note>No changes needed for SIMD; it will just compare them as strings with the current defintion.</emu-note>
 </emu-clause>
 
-<emu-clause id="abstract-equality-comparison">
-<h3>7.2.12 Abstract Equality Comparison</h3>
+<emu-clause id="abstract-equality">
+<h1>Abstract Equality Comparison (7.2.12)</h1>
 Replace step 10 with the following:
 <emu-alg>
-10. If Type(x) is either String, Number, Symbol, or Float32x4, and Type(y) is Object, then
-return the result of the comparison x == ToPrimitive(y).
+10. If Type(x) is either String, Number, Symbol, or Float32x4, and Type(y) is Object, then return the result of the comparison x == ToPrimitive(y).
 </emu-alg>
-<emu-clause>
+</emu-clause>
 
 <emu-clause id="strict-equality-comparison">
-<h3>7.2.13 Strict Equality Comparison</h3>
+<h1>Strict Equality Comparison (7.2.13)</h1>
 Add a new step 9:
 <emu-alg>
 9. If Type(x) is Float32x4, then
@@ -166,47 +176,66 @@ Add a new step 9:
 </emu-alg>
 </emu-clause>
 
-<!--
-12.5.6 The typeof Operator
+<emu-clause>
+<h1>The typeof Operator (12.5.6)</h1>
+<emu-clause>
+<h1>Runtime Semantics: Evaluation (12.5.6.1)</h1>
 
-12.5.6.1 Runtime Semantics: Evaluation
+<strong>Type of val</strong>: Float32x4
+<br/>
+<strong>Result</strong>: "float32x4"
+</emu-clause>
+</emu-clause>
 
-Type of val: Float32x4
-Result: "float32x4"
+<emu-clause>
+<h1>Constructor properties of the global object (18.3)</h1>
+<emu-clause>
+<h1>Float32x4 (18.3.34)</h1>
 
-18.3 Constructor properties of the global object
+See <a href="#simd-float32x4">27.1</a>
+</emu-clause>
+</emu-clause>
 
-18.3.34 Float32x4
-
-See 27.1
-
-27 SIMD objects
+<emu-clause id="simd">
+<h1>SIMD objects (27)</h1>
 
 The SIMD global object has several constructor properties, one for each SIMD type
 
-27.1 Float32x4 objects
+<emu-clause id="simd-float32x4">
+<h1>Float32x4 objects (27.1)</h1>
 
-NOTE: As with Boolean, String, etc, this is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function.
+<emu-note>
+As with Boolean, String, etc, this is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function.
+</emu-note>
 
-27.1.1 The Float32x4 constructor
+<emu-clause>
+<h1>The Float32x4 constructor (27.1.1)</h1>
 
-NOTE: The Float32x4 constructor reachable from the global object as SIMD.Float32x4. It is sometimes referred to in this spec as %SIMDFloat32x4% to reduce ambiguity and emphasize that, even if the SIMD object is modified or shadowed, references in this spec refer to the original binding.
+<emu-note>
+The Float32x4 constructor reachable from the global object as SIMD.Float32x4. It is sometimes referred to in this spec as %SIMDFloat32x4% to reduce ambiguity and emphasize that, even if the SIMD object is modified or shadowed, references in this spec refer to the original binding.
+</emu-note>
 
-27.1.1.1 Float32x4( value )
+<emu-clause id="float32x4-wrap">
+<h1>Float32x4( value ) (27.1.1.1)</h1>
 
 This description applies if Float32x4 is called with exactly one argument.
 
-1. If NewTarget is undefined, throw a ReferenceError (NB: TypeError)?
+<emu-alg>
+1. If NewTarget is undefined, throw a ReferenceError (NB: TypeError?)
 1. If value is not of the type Float32x4, throw a TypeError
 1. Let O be OrdinaryCreateFromConstructor(NewTarget, "%SIMDFloat32x4Prototype%", «[[Float32x4Data]]» ).
 1. ReturnIfAbrupt(O).
 1. Set the value of O’s [[Float32x4Data]] internal slot to n.
 1. Return O.
+</emu-alg>
+</emu-clause>
 
-27.1.1.2 Float32x4( x, y, z, w )
+<emu-clause id="float32x4-make">
+<h1>Float32x4( x, y, z, w ) (27.1.1.2)</h1>
 
 This description applies if Float32x4 is called with exactly four arguments. If it is called with a different number of arguments from one or four, throw a TypeError (NB: Or, call this version, with some things being undefined and/or some values ignored?)
 
+<emu-alg>
 1. Let xf be ToFloat32(x)
 1. ReturnIfAbrupt(xf)
 1. Let yf be ToFloat32(y)
@@ -216,9 +245,12 @@ This description applies if Float32x4 is called with exactly four arguments. If 
 1. Let yf be ToFloat32(w)
 1. ReturnIfAbrupt(wf)
 1. Return a Float32x4 primitive with the internal slots { [[Float32x4X]]: xf, [[Float32x4Y]]: yf, [[Float32x4Z]]: zf, [[Float32x4W]]: wf}
+</emu-alg>
 
-27.1.1.3 SIMD.Float32x4.extractLane(t, i)
+<emu-clause id="extract-lane">
+<h1>SIMD.Float32x4.extractLane(t, i) (27.1.1.3)</h1>
 
+<emu-alg>
 1. If Type(t) is not Float32x4, throw a TypeError exception
 1. Let index be ToNumber(i)
 1. If i is 0, return t.[[Float32x4X]]
@@ -226,23 +258,40 @@ This description applies if Float32x4 is called with exactly four arguments. If 
 1. If i is 2, return t.[[Float32x4Z]]
 1. If i is 3, return t.[[Float32x4W]]
 1. Else, return ReferenceError
+</emu-alg>
+</emu-clause>
 
-27.1.1.3 SIMD.Float32x4.add(a, b) 
+<emu-clause id="add">
+<h1>SIMD.Float32x4.add(a, b) (27.1.1.3)</h1>
 
+<emu-alg>
 1. If Type(a) is not Float32x4 or Type(b) is not Float32x4, throw a TypeError exception
 1. Return a Float32 with the internal slots {[[Float32x4X]]: ToFloat32(a.[[Float32x4X]] + b.[[Float32x4X]]), [[Float32x4Y]]: ToFloat32(a.[[Float32x4Y]] + b.[[Float32x4Y]]), [[Float32x4Z]]: ToFloat32(a.[[Float32x4Z]] + b.[[Float32x4Z]]), [[Float32x4W]]: ToFloat32(a.[[Float32x4W]] + b.[[Float32x4W]])}
+</emu-alg>
+</emu-clause>
 
+<!--
 27.1.1.3 splat
 
 27.1.1.3 replaceLane
 
 27.1.1.3 check
+-->
 
-27.1.2 The SIMD.Float32x4.prototype
+</emu-clause>
 
-NOTE: Previously, if accessors like x were included, these would be spec'd as getters (with null setter) on the SIMD.Float32x4.prototype . However, they have been removed in favor of SIMD.Float32x4.extractLane. Are there any non-trivial properties? Users could add methods like .add() here if they want to use SIMD in an object-oriented way.
+<emu-clause>
+<h1>The SIMD.Float32x4.prototype (27.1.2)</h1>
 
-27.1.2.1 SIMD.Float32x4.prototype.constructor
+<emu-note>
+Previously, if accessors like x were included, these would be spec'd as getters (with null setter) on the SIMD.Float32x4.prototype . However, they have been removed in favor of SIMD.Float32x4.extractLane. Are there any non-trivial properties? Users could add methods like .add() here if they want to use SIMD in an object-oriented way.
+</emu-note>
+
+<emu-clause>
+<h1>SIMD.Float32x4.prototype.constructor (27.1.2.1)</h1>
 
 The initial value of SIMD.Float32x4.prototype.constructor is the intrinsic object %SIMDFloat32x4%
--->
+</emu-clause>
+</emu-clause>
+</emu-clause>
+</emu-clause>

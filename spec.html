@@ -124,30 +124,49 @@ Even if it would be consistent to return false if it is all zero, there probably
 <strong>Result</strong>: return argument
 </emu-clause>
 
-7.2.9 SameValue(x, y)
-(extra step)
+<emu-clause id="same-value">
+<h3>7.2.9 SameValue(x, y)</h3>
+Add an extra step at the bottom of the definition of SameValue for the new case involving the new type:
+<emu-alg>
 11. If Type(x) is Float32x4, then
 a. If SameValue(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValue(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValue(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValue(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+</emu-alg>
+</emu-clause>
 
-7.2.10 SameValueZero(x, y)
-(extra step)
+<emu-clause id="same-value-zero">
+<h3>7.2.10 SameValueZero(x, y)</h3>
+Add an extra step at the bottom of the definition of SameValue for the new case involving the new type:
+<emu-alg>
 11. If Type(x) is Float32x4, then
-a. If SameValueZero(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValueZero(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValueZero(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValueZero(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+  1. If SameValueZero(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValueZero(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValueZero(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValueZero(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+</emu-alg>
+</emu-clause>
 
-7.2.11 Abstract relational comparison
-NOTE: No changes needed for SIMD; it will just compare them as strings with the current defintion.
+<emu-clause id="abstract-relational-comparison">
+<h3>7.2.11 Abstract relational comparison</h3>
+<emu-note>No changes needed for SIMD; it will just compare them as strings with the current defintion.</emu-note>
+</emu-clause>
 
-7.2.12 Abstract Equality Comparison
-In step 10: If Type(x) is either String, Number, Symbol, or Float32x4, and Type(y) is Object, then
+<emu-clause id="abstract-equality-comparison">
+<h3>7.2.12 Abstract Equality Comparison</h3>
+Replace step 10 with the following:
+<emu-alg>
+10. If Type(x) is either String, Number, Symbol, or Float32x4, and Type(y) is Object, then
 return the result of the comparison x == ToPrimitive(y).
+</emu-alg>
+<emu-clause>
 
-7.2.13 Strict Equality Comparison
+<emu-clause id="strict-equality-comparison">
+<h3>7.2.13 Strict Equality Comparison</h3>
+Add a new step 9:
+<emu-alg>
+9. If Type(x) is Float32x4, then
+  1. If x.[[Float32x4X]] === y.[[Float32x4X]] and x.[[Float32x4Y]] === y.[[Float32x4Y]] and x.[[Float32x4Z]] === y.[[Float32x4Z]] and x.[[Float32x4W]] === y.[[Float32x4W]], return true
+  1. Else, return false
+</emu-alg>
+</emu-clause>
 
-9 If Type(x) is Float32x4, then
-
-a. If x.[[Float32x4X]] === y.[[Float32x4X]] and x.[[Float32x4Y]] === y.[[Float32x4Y]] and x.[[Float32x4Z]] === y.[[Float32x4Z]] and x.[[Float32x4W]] === y.[[Float32x4W]], return true
-b. Else, return false
-
+<!--
 12.5.6 The typeof Operator
 
 12.5.6.1 Runtime Semantics: Evaluation
@@ -226,3 +245,4 @@ NOTE: Previously, if accessors like x were included, these would be spec'd as ge
 27.1.2.1 SIMD.Float32x4.prototype.constructor
 
 The initial value of SIMD.Float32x4.prototype.constructor is the intrinsic object %SIMDFloat32x4%
+-->

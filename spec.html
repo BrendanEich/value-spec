@@ -134,7 +134,7 @@ Even if it would be consistent to return false if it is all zero, there probably
 <emu-clause id="to-object">
 <h1>ToObject ( argument ) (<a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-toobject">7.1.13</a>)</h1>
 
-<strong>Argument type</strong>: _SIMD_
+<strong>Argument type</strong>: any _SIMD_ type
 <br/>
 <strong>Result</strong>: Return a new %_SIMD_% wrapper object whose [[SIMDWrapperData]] internal slot is set to _argument_.
 </emu-clause>
@@ -143,9 +143,9 @@ Even if it would be consistent to return false if it is all zero, there probably
 <emu-clause id="require-object-coercible">
 <h1>RequireObjectCoercible ( argument ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-requireobjectcoercible">7.2.1</a>)</h1>
 
-<strong>Argument type</strong>: _SIMD_
+<strong>Argument type</strong>: any _SIMD_ type
 <br/>
-<strong>Result</strong>: return argument
+<strong>Result</strong>: return _argument_
 </emu-clause>
 
 <emu-clause id="same-value">
@@ -236,7 +236,7 @@ Wrapper objects have the following internal slots:
 <li>[[SIMDSerializeElement]]: An internal algorithm for writing a Number as [[ElementSize]] bytes</li>
 <li>[[SIMDDeserializeElement]]: An internal algorithm for converting [[ElementSize]] bytes into a Number</li>
 </ul>
-<emu-note>Rather than constructors having internal slots, this could be specified by a table analogous to Table 49 in the ES6 description for TypedArrays. However, the author finds it easier to express this purely in terms of records.</emu-note>
+<emu-note>Rather than constructors having internal slots, this could be specified by a table analogous to Table 49 in the ES6 description for TypedArrays. However, the author finds it easier to express this purely in terms of records. TypedArrays could be specified like this too, and share some infrastructure with SIMD, but in their current form, it seems difficult to generalize them to SIMD directly.</emu-note>
 
 <emu-clause id="simd-algorithms">
 <h1>Internal algorithms on SIMD types</h1>
@@ -244,7 +244,8 @@ Wrapper objects have the following internal slots:
 <emu-clause id="simd-create">
 <h1>SIMDCreate( constructor, fields...)</h1>
 This internal algorithm creates a new value of the type corresponding to the specified wrapper with the following procedure:
-<em-note>The following algorithm uses splat arguments in the spec and indexes them as an array, but there isn't proper machinery in the spec to describe this behavior</em-note>
+
+<emu-note>The following algorithm uses splat arguments in the spec and indexes them as an array, but there isn't proper machinery in the spec to describe this behavior</emu-note>
 
 <emu-alg>
 1. If Length(fields) == _constructor_.[[SIMDLength]], then throw a TypeError.
@@ -254,7 +255,7 @@ This internal algorithm creates a new value of the type corresponding to the spe
 1. For _i_ from 0 to _constructor_.[[SIMDLength]],
   1. Let _n_ be ToNumber(fields[_i_]).
   1. ReturnIfAbrupt(_n_).
-  1. _constructor_.[[SIMDSerialize]](_block_, _i_ * _constructor_.[[SIMDElementSize]], _n_)
+  1. <var>constructor</var>.[[SIMDSerialize]](<var>block</var>, _i_ * _constructor_.[[SIMDElementSize]], _n_)
 1. Return the record { [[SIMDConstructor]]: _constructor_, [[SIMDDataBlock]]: _block_ }.
 </emu-alg>
 </emu-clause>
@@ -264,7 +265,7 @@ This internal algorithm creates a new value of the type corresponding to the spe
 <emu-alg>
 1. Assert: Type(_simd_) is a SIMD value type.
 1. Let _constructor_ be _simd_.[[SIMDConstructor]].
-1. return _constructor_.[[SIMDDeserialize]](_simd_.[[SIMDDataBlock]], _i_ * _constructor_.[[SIMDElementSize]])
+1. return <var>constructor</var>.[[SIMDDeserialize]](<var>simd</var>.[[SIMDDataBlock]], _i_ * _constructor_.[[SIMDElementSize]])
 </emu-alg>
 </emu-clause>
 
@@ -280,7 +281,7 @@ This internal algorithm creates a new value of the type corresponding to the spe
   1. Let _ax_ = SIMDExtractLane(_a_, _i_).
   1. Let _bx_ = SIMDExtractLane(_b_, _i_).
   1. Let _sum_ = _ax_ + _bx_.
-  1. _constructor_.[[SIMDSerialize]](_block_, _i_ * _constructor_.[[SIMDElementSize]], _sum_)
+  1. <var>constructor</var>.[[SIMDSerialize]](<var>block</var>, _i_ * _constructor_.[[SIMDElementSize]], _sum_)
 1. Return the record { [[SIMDConstructor]]: _constructor_, [[SIMDDataBlock]]: _block_ }.
 </emu-alg>
 </emu-clause>
@@ -381,7 +382,7 @@ The SIMD.Float32x4 intrinsic object has the following hidden slots:
 1. Assert: _n_ is a number.
 1. Assert: _offset_ + 4 is less than or equal to the size of _block_.
 1. Set _rawBytes_ to a List containing the 4 bytes that are the result of converting value to IEEE 754-2008 binary32 format using “Round to nearest, ties to even” rounding mode. Bytes are arranged in a consistent endianness for the platform; no API is provided to choose the endian order. If value is ~NaN~, _rawValue_ may be set to any implementation chosen non-signaling ~NaN~ encoding. An implementation must always choose the same non-signaling ~NaN~ encoding for a distinct Not-a-Number value.
-1. Store the individual bytes of _rawBytes_ into _block_, in order, starting at _block_[_offset_].
+1. Store the individual bytes of _rawBytes_ into _block_, in order, starting at <var>block</var>[<var>offset</var>].
 </emu-alg>
 </emu-clause>
 
@@ -392,7 +393,7 @@ The SIMD.Float32x4 intrinsic object has the following hidden slots:
 1. Assert: _block_ is a Data Block.
 1. Assert: _offset_ is a number.
 1. Assert: _offset_ + 4 is less than or equal to the size of _block_.
-1. Let _rawValue_ be a List of 4 containing, in order, the 4 sequence of bytes starting with _block_[_offset_].
+1. Let _rawValue_ be a List of 4 containing, in order, the 4 sequence of bytes starting with <var>block</var>[<var>offset</var>].
 1. Let _value_ be the byte elements of rawValue concatenated and interpreted as a little-endian bit string encoding of an IEEE 754-2008 binary32 value.
 1. If _value_ is an IEEE 754-2008 binary32 ~NaN~ value, return the ~NaN~ Number value.
 1. Return the Number value that corresponds to _value_.

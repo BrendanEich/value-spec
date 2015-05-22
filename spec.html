@@ -20,11 +20,13 @@ Ideally, SIMD values will fit into a larger value types proposal. Such a proposa
 </p>
 
 <p>
-This document is organized in terms of where changes would be made to the ES6 spec. Although ecmarkup generates numbering at the beginning of headers, these won't correspond to the numbering within the existing ECMA spec, so I've included a matching numbering in parentheses afterwards, referring to the ES6 spec. I also intend to add crossreferencing links where appropriate.
+This document is organized in terms of where changes would be made to the ES6 spec. Although ecmarkup generates numbering at the beginning of headers, these won't correspond to the numbering within the existing ECMA spec, so I've included a matching numbering in parentheses afterwards, referring to the ES6 spec. Crossreferencing links to ES6 exist where appropriate.
 </p>
 
 <p>
 In this text, _SIMD_ is used to refer to the various SIMD types: Float32x4, Int32x4, Int16x8, Int8x16, and Float64x2. Similarly to Number, _SIMD_ is used to refer to both the type <em>and</em> the wrapper constructor object. This looks a bit confusing, but it provides the most regularity, as an aim of this specification is to make SIMD types primitives that operate analogously to the existing primitives, rather than a new, exotic sort of thing. </p>
+
+<p>Because this document is in spec order, rather than written for direct readability, the logical starting point is actually <a href="simd-constructor">halfway down</a></p>
 
 <p>
 Related links:
@@ -67,6 +69,8 @@ Related links:
 </emu-clause>
 
 <emu-clause id="types">
+<h1>ECMAScript Data Types and Values <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-ecmascript-data-types-and-values">6</a></h1>
+<emu-clause id="simd-types">
 <h1>SIMD types</h1>
 <emu-clause id="type">
 <h1>Float32x4</h1>
@@ -75,6 +79,7 @@ Related links:
 `Float32x4` is a SIMD type representing four 32-bit floating point values. Float32x4 values can be created using the [[Call]] operation on the <a href="#simd-float32x4">SIMD.Float32x4</a> object.
 </p>
 <emu-note> Similar entries should exist for each of the 5 SIMD types </emu-note>
+</emu-clause>
 </emu-clause>
 </emu-clause>
 
@@ -210,7 +215,7 @@ Add a new step 9, before the existing step 9:
 </emu-clause>
 
 <emu-clause id="simd">
-<h1>SIMD objects</h1>
+<h1>SIMD objects (top-level section)</h1>
 
 <p>
 The SIMD global object has several constructor properties, one for each SIMD type.
@@ -282,7 +287,7 @@ This internal algorithm creates a new value of the type corresponding to the spe
 
 <emu-clause id="simd-cast">
 <h1>SIMDCast( simd, newConstructor )</h1>
-<emu-note>This is used to define operations like SIMD.Float32x4.fromInt8x16Bits, but it is not used yet because no other SIMD types are defined in this document yet.
+<emu-note>This is used to define operations like SIMD.Float32x4.fromInt8x16Bits, but it is not used yet because no other SIMD types are defined in this document yet.</emu-note>
 <emu-alg>
 1. Assert: _simd_.[[SIMDConstructor]].[[SIMDLength]] * _simd_.[[SIMDConstructor]].[[SIMDElementSize]] == _newConstructor_.[[SIMDLength]] * _newConstructor_.[[SIMDElementSize]].
 1. Let _bytes_ be _newConstructor_.[[SIMDLength]] * _newConstructor_.[[SIMDElementSize]].
@@ -382,7 +387,7 @@ The SIMD.Float32x4 intrinsic object has the following hidden slots:
 
 <emu-clause id="deserialize-float32">
 <h1>DeserializeFloat32( block, offset )</h1>
-<emu-note>Derived from part of SetValueInBuffer</emu-note>
+<emu-note>Derived from part of GetValueInBuffer</emu-note>
 <emu-alg>
 1. Assert: _block_ is a Data Block.
 1. Assert: _offset_ is a number.

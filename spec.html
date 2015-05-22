@@ -8,19 +8,19 @@
 <emu-intro id="intro">
 <h1>Introduction</h1>
 <p>
-This proposal adds SIMD types and operations to Javascript, focusing on the value semantics. The proposal adds new primitive types float32x4, etc, together with wrappers and a definition of their behavior in the language.  The proposal discusses float32x4 and just a couple functions on it, with the idea that it would extend similarly to other SIMD types. Rough definitions for more types and functions that operate on them can be found at <a href="https://github.com/johnmccutchan/ecmascript_simd/blob/master/tc39/simd-spec262.md">the SIMD.js spec</a>. This document is organized in terms of where changes would be made to the ES6 spec.
+This proposal adds SIMD types and operations to Javascript, focusing on the value semantics. The proposal adds new primitive types Float32x4, etc, together with wrappers and a definition of their behavior in the language.  The proposal discusses Float32x4 and just a couple functions on it, with the idea that it would extend similarly to other SIMD types. Rough definitions for more types and functions that operate on them can be found at <a href="https://github.com/johnmccutchan/ecmascript_simd/blob/master/tc39/simd-spec262.md">the SIMD.js spec</a>.
 </p>
 
 <p>
-The key problem that this spec aims to solve, over the previous informal SIMD specification, is the way that SIMD values were previously objects with identity-based equality. Maintaining object identity puts a big burden on compilers to maintain this identity through operations, where they would rather be able to duplicate and de-duplicate SIMD values arbitrarily based on algebraic identities. By making SIMD values into primitive types with structural equality, compilers are given more freedom. However, this gives a lot to expand on in the spec.
+One problem that this spec aims to solve is to define equality for SIMD values. Existing implementations use object identity-based equality. However, maintaining object identity puts a big burden on compilers to maintain this identity through operations, where they would rather be able to duplicate and de-duplicate SIMD values arbitrarily based on algebraic identities. By making SIMD values into primitive types with structural equality, compilers are given more freedom.
 </p>
 
 <p>
-Ideally, SIMD values will fit into a larger value types proposal. Such a proposal would be a bit more involved, but good work has already been done in that direction. This document describes SIMD without a larger value type system, but it aims to be consistent with how value types might work, and once someone steps forward to describe value types in more detail, it will be great to simplify this text by just explaining SIMD in terms of value types.
+Ideally, SIMD values will fit into a larger value types proposal. Such a proposal would be a bit more involved, but good work has already been done in that direction. This document describes SIMD without a larger value type system, but it aims to be consistent with how value types might work, and once someone steps forward to describe value types in more detail, it will be great to simplify this text by just explaining SIMD in terms of value types. On the other hand, this proposal gives a vehicle to work out some of the issues in value types and can be used as a guide for future value type designs.
 </p>
 
 <p>
-Many parts of this spec edit existing parts of the ES6 spec. Although ecmarkup generates numbering at the beginning of headers, these won't correspond to the numbering within the existing ECMA spec, so I've included a matching numbering in parentheses afterwards, referring to the ES6 spec. I also intend to add crossreferencing links where appropriate.
+This document is organized in terms of where changes would be made to the ES6 spec. Although ecmarkup generates numbering at the beginning of headers, these won't correspond to the numbering within the existing ECMA spec, so I've included a matching numbering in parentheses afterwards, referring to the ES6 spec. I also intend to add crossreferencing links where appropriate.
 </p>
 
 <p>
@@ -34,32 +34,33 @@ Related links:
 </emu-intro>
 
 <emu-clause id="all-types">
-<h1>ECMAScript language types (6.1)</h1>
+<h1>ECMAScript language types (<a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-ecmascript-language-types">6.1</a>)</h1>
 <emu-clause id="intrinsics">
-<h1>Well-Known Intrinsic Objects (6.1.7.4)</h1>
+<h1>Well-Known Intrinsic Objects (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-well-known-intrinsic-objects">6.1.7.4</a>)</h1>
 <p>
 <strong>Intrinsic name</strong>: %SIMD%
 <br/>
-<strong>Global name</strong>: SIMD
+<strong>Global name</strong>: `SIMD`
 <br/>
-<strong>ECMAScript Language Association</strong>: The SIMD object (27)
+<strong>ECMAScript Language Association</strong>: The `SIMD` object (<a href="#simd">27</a>)
 </p>
 
 <p>
 <strong>Intrinsic name</strong>: %SIMDFloat32x4%
 <br/>
-<strong>Global name</strong>: SIMD.Float32x4
+<strong>Global name</strong>: `SIMD.Float32x4`
 <br/>
-<strong>ECMAScript Language Association</strong>: The SIMD.Float32x4 constructor (27.1.1)
+<strong>ECMAScript Language Association</strong>: The `SIMD.Float32x4` constructor (<a href="#float32x4-constructor">27.1.1</a>)
 </p>
 
 <p>
-Intrinsic name: %SIMDFloat32x4Prototype%
+<strong>Intrinsic name</strong>: %SIMDFloat32x4Prototype%
 <br/>
-Global name: SIMD.Float32x4.prototype
+<strong>Global name</strong>: SIMD.Float32x4.prototype
 <br/>
-ECMAScript Language Association: The initial value of the prototype data property of %SIMDFLoat32x4% (27.1.2)
+<strong>ECMAScript Language Association</strong>: The initial value of the prototype data property of %SIMDFLoat32x4% (27.1.2)
 </p>
+</emu-clause>
 </emu-clause>
 
 <emu-clause id="types">
@@ -68,21 +69,23 @@ ECMAScript Language Association: The initial value of the prototype data propert
 <h1>Float32x4 (6.1.8.1)</h1>
 
 <p>
-Float32x4 is a SIMD type representing four 32-bit floating point values. Float32x4 values can be created using the [[Call]] operation on the SIMD.Float32x4 object, described in 27.1.1.
+`Float32x4` is a SIMD type representing four 32-bit floating point values. Float32x4 values can be created using the [[Call]] operation on the <a href="#float32x4-constructor">SIMD.Float32x4</a> object, described in 27.1.1.
 </p>
 </emu-clause>
 </emu-clause>
 
-<h1>Abstract Operations (7)</h1>
+<emu-clause>
+<h1>Abstract Operations (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-abstract-operations">7</a>)</h1>
 
-<h1>Type Conversion (7.1)</h1>
+<emu-clause>
+<h1>Type Conversion (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-type-conversion">7.1</a>)</h1>
 
 <emu-clause id="to-primitive">
-<h1>ToPrimitive ( input [, PreferredType] ) (7.1.1)</h1>
+<h1>ToPrimitive ( input [, PreferredType] ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-toprimitive">7.1.1</a>)</h1>
 
-<strong>Argument type</strong>: Float32x4
+<strong>Argument type</strong>: `Float32x4`
 <br/>
-<strong>Result</strong>: return input
+<strong>Result</strong>: return _input_
 
 <emu-note>
 An additional option considered is to define this as calling ToObject on it, and then ToPrimitive on the resulting wrapper object. This would have the advantage of allowing toString and valueOf be defined on the wrapper prototype, which seems more realistic to me as a path for value types.
@@ -90,11 +93,11 @@ An additional option considered is to define this as calling ToObject on it, and
 </emu-clause>
 
 <emu-clause id="to-boolean">
-<h1>ToBoolean ( argument ) (7.1.2)</h1>
+<h1>ToBoolean ( argument ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-toboolean">7.1.2</a>)</h1>
 
-<strong>Argument type</strong>: Float32x4
+<strong>Argument type</strong>: `Float32x4`
 <br/>
-<strong>Result</strong>: return true
+<strong>Result</strong>: return ~true~
 
 <emu-note>
 Even if it would be consistent to return false if it is all zero, there probably isn't much gain from adding more falsy values.
@@ -102,11 +105,11 @@ Even if it would be consistent to return false if it is all zero, there probably
 </emu-clause>
 
 <emu-clause id="to-number">
-<h1>ToNumber ( argument ) (7.1.3)</h1>
+<h1>ToNumber ( argument ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tonumber">7.1.3</a>)</h1>
 
-<strong>Argument type</strong>: Float32x4
+<strong>Argument type</strong>: `Float32x4`
 </br>
-<strong>Result</strong>: throw a TypeError exception
+<strong>Result</strong>: throw a ~TypeError~ exception
 </emu-clause>
 
 <emu-clause id="to-string">
@@ -125,6 +128,7 @@ Even if it would be consistent to return false if it is all zero, there probably
 <strong>Argument type</strong>: Float32x4
 <br/>
 <strong>Result</strong>: Return a new %SIMDFloat32x4% object whose [[Float32x4Data]] internal slot is set to argument. See 27.1 for a description of %SIMDFloat32x4% objects.
+</emu-clause>
 </emu-clause>
 
 <emu-clause id="require-object-coercible">
@@ -149,17 +153,18 @@ Add an extra step at the bottom of the definition of SameValue for the new case 
 Add an extra step at the bottom of the definition of SameValue for the new case involving the new type:
 <emu-alg>
 11. If Type(x) is Float32x4, then
-  1. If SameValueZero(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValueZero(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValueZero(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValueZero(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+  1. Assert: Type(y) is Float32x4
+  1. If SameValueZero(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValueZero(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValueZero(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValueZero(x.[[Float32x4W]], y.[[Float32x4W]]), return ~true~, otherwise return ~false~
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="abstract-relational-comparison">
-<h1>Abstract relational comparison (7.2.11)</h1>
+<h1>Abstract relational comparison (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-abstract-relational-comparison">7.2.11</a>)</h1>
 <emu-note>No changes needed for SIMD; it will just compare them as strings with the current defintion.</emu-note>
 </emu-clause>
 
 <emu-clause id="abstract-equality">
-<h1>Abstract Equality Comparison (7.2.12)</h1>
+<h1>Abstract Equality Comparison (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-abstract-equality-comparison">7.2.12</a>)</h1>
 Replace step 10 with the following:
 <emu-alg>
 10. If Type(x) is either String, Number, Symbol, or Float32x4, and Type(y) is Object, then return the result of the comparison x == ToPrimitive(y).
@@ -167,13 +172,14 @@ Replace step 10 with the following:
 </emu-clause>
 
 <emu-clause id="strict-equality-comparison">
-<h1>Strict Equality Comparison (7.2.13)</h1>
-Add a new step 9:
+<h1>Strict Equality Comparison (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-strict-equality-comparison">7.2.13</a>)</h1>
+Add a new step 9, before the existing step 9:
 <emu-alg>
 9. If Type(x) is Float32x4, then
   1. If x.[[Float32x4X]] === y.[[Float32x4X]] and x.[[Float32x4Y]] === y.[[Float32x4Y]] and x.[[Float32x4Z]] === y.[[Float32x4Z]] and x.[[Float32x4W]] === y.[[Float32x4W]], return true
   1. Else, return false
 </emu-alg>
+</emu-clause>
 </emu-clause>
 
 <emu-clause>
@@ -208,7 +214,7 @@ The SIMD global object has several constructor properties, one for each SIMD typ
 As with Boolean, String, etc, this is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function.
 </emu-note>
 
-<emu-clause>
+<emu-clause id="float32x4-constructor">
 <h1>The Float32x4 constructor (27.1.1)</h1>
 
 <emu-note>

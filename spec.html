@@ -472,6 +472,34 @@ This description applies if the constructor is called with more than one argumen
 </emu-alg>
 </emu-clause>
 
+<emu-clause id="simd-store-function">
+<h1>_SIMD_.store(tarray, index, simd)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_, throw a TypeError.
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_.[[SIMDElementSize]] * _SIMD_.[[SIMDLength]] > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. SIMDStore(_block_, _SIMD_, _byteIndex_, _simd_).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-load-function">
+<h1>_SIMD_.load(tarray, index)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_, throw a TypeError.
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_.[[SIMDElementSize]] * _SIMD_.[[SIMDLength]] > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. Return SIMDLoad(_block_, _SIMD_, _byteIndex_).
+</emu-alg>
+</emu-clause>
+
 <emu-clause id="simd-proto">
 <h1>The _SIMD_.prototype</h1>
 

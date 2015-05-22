@@ -74,6 +74,22 @@ Related links:
 </emu-clause>
 </emu-clause>
 
+<emu-clause id="data-blocks">
+<h1>Data blocks (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-data-blocks">6.2.6</a>)</h1>
+<emu-note>SIMD types are explained in terms of Data Blocks, with each SIMD value containing one Data Block. The ES6 spec has some machinery for accessing data blocks implemented in the Array Buffer specification; the following abstract operations are factored out from GetValueFromBuffer and SetValueInBuffer, and could be used there as well as in SIMD.
+
+<emu-clause id="get-value-from-block" aoid="GetValueFromDataBlock">
+<h1>GetValueFromDataBlock( block, byteIndex, type, isLittleEndian )</h1>
+Follow steps 5-13 in <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-getvaluefrombuffer">GetValueFromBuffer</a>.
+<!-- TODO(littledan): Copy that definition here rather than referring to it. -->
+</emu-clause>
+
+<emu-clause id="set-value-in-block" aoid="SetValueInDataBlock">
+<h1>GetValueFromDataBlock( block, byteIndex, type, value, isLittleEndian )</h1>
+Follow steps 7-13 in <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-setvalueinbuffer">SetValueInDataBlock</a>.
+<!-- TODO(littledan): Copy that definition here rather than referring to it. -->
+</emu-clause>
+
 <emu-clause id="abstract-operations">
 <h1>Abstract Operations (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-abstract-operations">7</a>)</h1>
 
@@ -203,36 +219,36 @@ See <a href="#simd-float32x4">27.1</a>
 </emu-clause>
 
 <emu-clause id="simd">
-<h1>SIMD objects (27)</h1>
+<h1>SIMD objects</h1>
 
 The SIMD global object has several constructor properties, one for each SIMD type
 
 <emu-clause id="simd-float32x4">
-<h1>Float32x4 objects (27.1)</h1>
+<h1>Float32x4 objects</h1>
 
 <emu-note>
 As with Boolean, String, etc, this is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function.
 </emu-note>
 
 <emu-clause id="float32x4-constructor">
-<h1>The Float32x4 constructor (27.1.1)</h1>
+<h1>The Float32x4 constructor</h1>
 
 <emu-note>
 The Float32x4 constructor reachable from the global object as SIMD.Float32x4. It is sometimes referred to in this spec as %SIMDFloat32x4% to reduce ambiguity and emphasize that, even if the SIMD object is modified or shadowed, references in this spec refer to the original binding.
 </emu-note>
 
 <emu-clause id="float32x4-wrap">
-<h1>Float32x4( value ) (27.1.1.1)</h1>
+<h1>Float32x4( value )</h1>
 
 This description applies if Float32x4 is called with exactly one argument.
 
 <emu-alg>
-1. If NewTarget is undefined, throw a ReferenceError (NB: TypeError?)
-1. If value is not of the type Float32x4, throw a TypeError
-1. Let O be OrdinaryCreateFromConstructor(NewTarget, "%SIMDFloat32x4Prototype%", «[[Float32x4Data]]» ).
-1. ReturnIfAbrupt(O).
-1. Set the value of O’s [[Float32x4Data]] internal slot to n.
-1. Return O.
+1. If ~NewTarget~ is undefined, throw a ~ReferenceError~ (NB: ~TypeError~?).
+1. If value is not of the type ~Float32x4~, throw a ~TypeError~.
+1. Let _O_ be OrdinaryCreateFromConstructor(~NewTarget~, "%SIMDFloat32x4Prototype%", «[[Float32x4Data]]» ).
+1. ReturnIfAbrupt(_O_).
+1. Set the value of _O_’s [[Float32x4Data]] internal slot to _value_.
+1. Return _O_.
 </emu-alg>
 </emu-clause>
 
@@ -242,6 +258,8 @@ This description applies if Float32x4 is called with exactly one argument.
 This description applies if Float32x4 is called with exactly four arguments. If it is called with a different number of arguments from one or four, throw a TypeError (NB: Or, call this version, with some things being undefined and/or some values ignored?)
 
 <emu-alg>
+1. Let _block_ be CreateByteDataBlock(16).
+
 1. Let xf be ToFloat32(x)
 1. ReturnIfAbrupt(xf)
 1. Let yf be ToFloat32(y)
@@ -288,14 +306,14 @@ This description applies if Float32x4 is called with exactly four arguments. If 
 </emu-clause>
 
 <emu-clause id="float32x4-proto">
-<h1>The SIMD.Float32x4.prototype (27.1.2)</h1>
+<h1>The SIMD.Float32x4.prototype</h1>
 
 <emu-note>
 Previously, if accessors like x were included, these would be spec'd as getters (with null setter) on the SIMD.Float32x4.prototype . However, they have been removed in favor of SIMD.Float32x4.extractLane. Are there any non-trivial properties? Users could add methods like .add() here if they want to use SIMD in an object-oriented way.
 </emu-note>
 
 <emu-clause id="float32x4-constructor">
-<h1>SIMD.Float32x4.prototype.constructor (27.1.2.1)</h1>
+<h1>SIMD.Float32x4.prototype.constructor</h1>
 
 The initial value of SIMD.Float32x4.prototype.constructor is the intrinsic object %SIMDFloat32x4%
 </emu-clause>

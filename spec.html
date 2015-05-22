@@ -275,6 +275,29 @@ Add a new step 9, before the existing step 9:
 </emu-clause>
 </emu-clause>
 
+<emu-clause id="dataview">
+<h1>DataView objects (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-dataview-objects">24.2</a>)</h1>
+<emu-clause id="dataview-proto">
+<h1>Properties of the DataView Prototype Object (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-dataview-prototype-object">24.2.4</a>)</h1>
+For each SIMD type descriptor _SIMD_, called by names like `Float32x4`, define the following property on `DataView.prototype`:
+<emu-clause id="dataview-getsimd">
+<h1>DataView.prototype.get_SIMD_ ( byteOffset [ , littleEndian ] )</h1>
+<emu-alg>
+1. Let _v_ be the ~this~ value.
+1. If _littleEndian_ is not present, let _littleEndian_ be false.
+1. Let _list_ be a new List of length _SIMD_.[[SIMDLength]].
+1. Let _typeName_ be the string `"_SIMD_"` up until the "x" character, e.g., `"Float32"` for `Float32x4`.
+1. For _i_ from 0 to _SIMD_.[[SIMDLength]] - 1,
+  1. Set <var>list</var>[<var>i</var>] to GetViewValue(_v_, _byteOffset_ + _i_ * _SIMD_.[[SIMDElementSize]], _littleEndian_, _typeName_)
+1. Return SIMDCreate(_SIMD_, ..._list_).
+</emu-alg>
+<emu-note>GetViewValue does the range checking for us.</emu-note>
+<emu-note>This algorithm uses the GetValueFromBuffer machinery rather than the [[SIMDDeserialize]] machinery; these have matching definitions, and ideally the spec would be refactored in terms of one of the two.</emu-note>
+</emu-clause>
+
+</emu-clause>
+</emu-clause>
+
 <emu-clause id="simd">
 <h1>SIMD objects (top-level section)</h1>
 
@@ -455,6 +478,7 @@ The initial value of _SIMD_.prototype.constructor is the intrinsic object %_SIMD
 <emu-clause id="simd-descriptors">
 <h1>SIMD type descriptors</h1>
 In the internal algorithms in this section, preceding the first step, if _isLittleEndian_ is not present, set _isLittleEndian_ to either ~true~ or ~false~. The choice is implementation dependent and should be the alternative that is most efficient for the implementation. An implementation must use the same value each time one of the following algorithms is executed, and it must be consistent across all algorithms.
+<emu-note>A refactoring might be able to reduce the size of this section somewhat.</emu-note>
 
 <emu-clause id="simd-float32x4">
 <h1>Float32x4 type descriptor</h1>

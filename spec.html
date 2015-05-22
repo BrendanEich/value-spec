@@ -180,7 +180,7 @@ Add an extra step at the bottom of the definition of SameValueZero for the new c
 <h1>Abstract Equality Comparison (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-abstract-equality-comparison">7.2.12</a>)</h1>
 Replace step 10 with the following:
 <emu-alg>
-10. If Type(x) is either String, Number, Symbol, or Float32x4, and Type(y) is Object, then return the result of the comparison x == ToPrimitive(y).
+10. If Type(x) is either String, Number, Symbol, or any _SIMD_ type, and Type(y) is Object, then return the result of the comparison x == ToPrimitive(y).
 </emu-alg>
 </emu-clause>
 
@@ -207,6 +207,7 @@ Add a new step 9, before the existing step 9:
 <br/>
 <strong>Result</strong>: "float32x4"
 <emu-note>This applies similarly for other SIMD types, using the lower-cased version of the constructor/type name as the typeof. This follows the pattern for Number ("number"), Boolean ("boolean"), etc.
+</emu-note>
 </emu-clause>
 </emu-clause>
 

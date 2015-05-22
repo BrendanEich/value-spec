@@ -364,7 +364,7 @@ This internal algorithm creates a new value of the type corresponding to the spe
 1. Assert: _dataBlock_ is a Data Block, _descriptor_ is a SIMD type descriptor
 1. Assert: _byteOffset_ is an integer greater than or equal to zero, and less than or equal to the size of _dataBlock_ - _descriptor_.[[SIMDElementSize]] * _descriptor_.[[SIMDLength]].
 1. For _i_ from 0 to _descriptor_.[[SIMDLength]] - 1,
-  1. <var>descriptor</var>.[[SIMDSerializeElement]](<var>dataBlock</var>, _byteOffset_ + _i_ * _descriptor_.[[SIMDElementSize]], _n_.[[SIMDElements]][_i_]).
+  1. <var>descriptor</var>.[[SIMDSerializeElement]](<var>dataBlock</var>, _byteOffset_ + _i_ * _descriptor_.[[SIMDElementSize]], <var>n</var>.[[SIMDElements]][<var>i</var>]).
 </emu-alg>
 </emu-clause>
 

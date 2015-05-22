@@ -74,10 +74,10 @@ Related links:
 </emu-clause>
 </emu-clause>
 
-<emu-clause>
+<emu-clause id="abstract-operations">
 <h1>Abstract Operations (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-abstract-operations">7</a>)</h1>
 
-<emu-clause>
+<emu-clause id="type-conversion">
 <h1>Type Conversion (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-type-conversion">7.1</a>)</h1>
 
 <emu-clause id="to-primitive">
@@ -182,9 +182,9 @@ Add a new step 9, before the existing step 9:
 </emu-clause>
 </emu-clause>
 
-<emu-clause>
+<emu-clause id="typeof">
 <h1>The typeof Operator (12.5.6)</h1>
-<emu-clause>
+<emu-clause id="typeof-evaluation">
 <h1>Runtime Semantics: Evaluation (12.5.6.1)</h1>
 
 <strong>Type of val</strong>: Float32x4
@@ -193,9 +193,9 @@ Add a new step 9, before the existing step 9:
 </emu-clause>
 </emu-clause>
 
-<emu-clause>
+<emu-clause id="constructor-global">
 <h1>Constructor properties of the global object (18.3)</h1>
-<emu-clause>
+<emu-clause id="constructor-global-float32x4">
 <h1>Float32x4 (18.3.34)</h1>
 
 See <a href="#simd-float32x4">27.1</a>
@@ -287,14 +287,14 @@ This description applies if Float32x4 is called with exactly four arguments. If 
 </emu-clause>
 </emu-clause>
 
-<emu-clause>
+<emu-clause id="float32x4-proto">
 <h1>The SIMD.Float32x4.prototype (27.1.2)</h1>
 
 <emu-note>
 Previously, if accessors like x were included, these would be spec'd as getters (with null setter) on the SIMD.Float32x4.prototype . However, they have been removed in favor of SIMD.Float32x4.extractLane. Are there any non-trivial properties? Users could add methods like .add() here if they want to use SIMD in an object-oriented way.
 </emu-note>
 
-<emu-clause>
+<emu-clause id="float32x4-constructor">
 <h1>SIMD.Float32x4.prototype.constructor (27.1.2.1)</h1>
 
 The initial value of SIMD.Float32x4.prototype.constructor is the intrinsic object %SIMDFloat32x4%

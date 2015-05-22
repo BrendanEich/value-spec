@@ -279,7 +279,7 @@ Add a new step 9, before the existing step 9:
 <h1>DataView objects (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-dataview-objects">24.2</a>)</h1>
 <emu-clause id="dataview-proto">
 <h1>Properties of the DataView Prototype Object (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-dataview-prototype-object">24.2.4</a>)</h1>
-For each SIMD type descriptor _SIMD_, called by names like `Float32x4`, define the following property on `DataView.prototype`:
+For each SIMD type descriptor _SIMD_, called by names like `Float32x4`, define the following properties on `DataView.prototype`:
 <emu-clause id="dataview-getsimd">
 <h1>DataView.prototype.get_SIMD_ ( byteOffset [ , littleEndian ] )</h1>
 <emu-alg>
@@ -293,6 +293,18 @@ For each SIMD type descriptor _SIMD_, called by names like `Float32x4`, define t
 </emu-alg>
 <emu-note>GetViewValue does the range checking for us.</emu-note>
 <emu-note>This algorithm uses the GetValueFromBuffer machinery rather than the [[SIMDDeserialize]] machinery; these have matching definitions, and ideally the spec would be refactored in terms of one of the two.</emu-note>
+</emu-clause>
+
+<emu-clause id="dataview-setsimd">
+<h1>DataView.prototype.set_SIMD_ ( byteOffset, value [ , littleEndian ] )</h1>
+<emu-alg>
+1. If Type(_value_) is not _SIMD_, throw a ~TypeError~.
+1. Let _v_ be the ~this~ value.
+1. If _littleEndian_ is not present, let _littleEndian_ be false.
+1. Let _typeName_ be the string `"_SIMD_"` up until the "x" character, e.g., `"Float32"` for `Float32x4`.
+1. For _i_ from 0 to _SIMD_.[[SIMDLength]] - 1,
+  1. SetViewValue(_v_, _byteOffset_ + _i_ * _SIMD_.[[SIMDElementSize]], _littleEndian_, _typeName_, <var>value</var>.[[SIMDElements]][<var>i</var>])
+</emu-alg>
 </emu-clause>
 
 </emu-clause>

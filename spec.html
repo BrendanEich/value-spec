@@ -26,7 +26,7 @@ This document is organized in terms of where changes would be made to the ES6 sp
 <p>
 In this text, _SIMD_ is used to refer to the various SIMD types: Float32x4, Int32x4, Int16x8, Int8x16, and Float64x2. Similarly to Number, _SIMD_ is used to refer to both the type <em>and</em> the wrapper constructor object. This looks a bit confusing, but it provides the most regularity, as an aim of this specification is to make SIMD types primitives that operate analogously to the existing primitives, rather than a new, exotic sort of thing. </p>
 
-<p><strong>Please file any issues <a href="https://github.com/littledan/value-spec/issues">here</a>!</strong></p>
+<p><strong>Please file any issues <a href="https://github.com/johnmccutchan/ecmascript_simd/issues">here</a>!</strong></p>
 
 <p>Because this document is in spec order, rather than written for direct readability, the logical starting point is actually <a href="#simd-constructor">halfway down</a>.</p>
 
@@ -412,7 +412,7 @@ The Float32x4 SIMD type descriptor has the following internal slots:
 
 <emu-clause id="serialize-float32">
 <h1>SerializeFloat32( block, offset, n )</h1>
-<emu-note>Derived from part of SetValueInBuffer</emu-note>
+<emu-note>Derived from part of <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-setvalueinbuffer">SetValueInBuffer</a>. Note that this specification does not require a particular bit pattern for ~NaN~, and that it does not need to be the same across calls, but it cannot be signalling because the serialized value should be safe for other code to read, if a number is placed in an external ArrayBuffer which is read by external code.</emu-note>
 <emu-alg>
 1. Assert: _block_ is a Data Block.
 1. Assert: _offset_ is a number.
@@ -425,7 +425,7 @@ The Float32x4 SIMD type descriptor has the following internal slots:
 
 <emu-clause id="deserialize-float32">
 <h1>DeserializeFloat32( block, offset )</h1>
-<emu-note>Derived from part of GetValueInBuffer</emu-note>
+<emu-note>Derived from part of <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-getvaluefrombuffer">GetValueFromBuffer</a>. Note that while this says to return "the ~NaN~ value", the binary representation is not observable and canonicalization is not required.</emu-note>
 <emu-alg>
 1. Assert: _block_ is a Data Block.
 1. Assert: _offset_ is a number.

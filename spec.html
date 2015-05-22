@@ -24,6 +24,12 @@ This document is organized in terms of where changes would be made to the ES6 sp
 </p>
 
 <p>
+In this text, _SIMD_ is used to refer to the various SIMD types: Float32x4, Int32x4, Int16x8, Int8x16, and Float64x2. 
+Similarly to Number, _SIMD_ is used to refer to both the type <em>and</em> the wrapper constructor object.
+This looks a bit confusing, but it provides the most regularity, as an aim of this specification is to make SIMD types primitives that operate analogously to the existing primitives, rather than a new, exotic sort of thing.
+</p>
+
+<p>
 Related links:
 </p>
 <ul>
@@ -46,48 +52,32 @@ Related links:
 </p>
 
 <p>
-<strong>Intrinsic name</strong>: %SIMDFloat32x4%
+<strong>Intrinsic name</strong>: %_SIMD_%
 <br/>
-<strong>Global name</strong>: `SIMD.Float32x4`
+<strong>Global name</strong>: `SIMD.`_SIMD_ (e.g., `SIMD.Float32x4`)
 <br/>
-<strong>ECMAScript Language Association</strong>: The `SIMD.Float32x4` constructor (<a href="#float32x4-constructor">27.1.1</a>)
+<strong>ECMAScript Language Association</strong>: The <a href="#simd-constructor">_SIMD_</a> constructor
 </p>
 
 <p>
-<strong>Intrinsic name</strong>: %SIMDFloat32x4Prototype%
+<strong>Intrinsic name</strong>: %_SIMD_Prototype%
 <br/>
-<strong>Global name</strong>: SIMD.Float32x4.prototype
+<strong>Global name</strong>: `SIMD.`_SIMD_`.prototype` (e.g., `SIMD.Float32x4.prototype`)
 <br/>
-<strong>ECMAScript Language Association</strong>: The initial value of the prototype data property of %SIMDFLoat32x4% (27.1.2)
+<strong>ECMAScript Language Association</strong>: The initial value of the prototype data property of %_SIMD_% (27.1.2)
 </p>
 </emu-clause>
 </emu-clause>
 
 <emu-clause id="types">
-<h1>SIMD types (6.1.8)</h1>
+<h1>SIMD types</h1>
 <emu-clause id="type">
-<h1>Float32x4 (6.1.8.1)</h1>
+<h1>Float32x4</h1>
 
 <p>
-`Float32x4` is a SIMD type representing four 32-bit floating point values. Float32x4 values can be created using the [[Call]] operation on the <a href="#float32x4-constructor">SIMD.Float32x4</a> object, described in 27.1.1.
+`Float32x4` is a SIMD type representing four 32-bit floating point values. Float32x4 values can be created using the [[Call]] operation on the <a href="#simd-float32x4">SIMD.Float32x4</a> object.
 </p>
 </emu-clause>
-</emu-clause>
-
-<emu-clause id="data-blocks">
-<h1>Data blocks (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-data-blocks">6.2.6</a>)</h1>
-<emu-note>SIMD types are explained in terms of Data Blocks, with each SIMD value containing one Data Block. The ES6 spec has some machinery for accessing data blocks implemented in the Array Buffer specification; the following abstract operations are factored out from GetValueFromBuffer and SetValueInBuffer, and could be used there as well as in SIMD.
-
-<emu-clause id="get-value-from-block" aoid="GetValueFromDataBlock">
-<h1>GetValueFromDataBlock( block, byteIndex, type, isLittleEndian )</h1>
-Follow steps 5-13 in <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-getvaluefrombuffer">GetValueFromBuffer</a>.
-<!-- TODO(littledan): Copy that definition here rather than referring to it. -->
-</emu-clause>
-
-<emu-clause id="set-value-in-block" aoid="SetValueInDataBlock">
-<h1>GetValueFromDataBlock( block, byteIndex, type, value, isLittleEndian )</h1>
-Follow steps 7-13 in <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-setvalueinbuffer">SetValueInDataBlock</a>.
-<!-- TODO(littledan): Copy that definition here rather than referring to it. -->
 </emu-clause>
 
 <emu-clause id="abstract-operations">
@@ -99,7 +89,7 @@ Follow steps 7-13 in <a href="https://people.mozilla.org/~jorendorff/es6-draft.h
 <emu-clause id="to-primitive">
 <h1>ToPrimitive ( input [, PreferredType] ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-toprimitive">7.1.1</a>)</h1>
 
-<strong>Argument type</strong>: `Float32x4`
+<strong>Argument type</strong>: _SIMD_
 <br/>
 <strong>Result</strong>: return _input_
 
@@ -111,7 +101,7 @@ An additional option considered is to define this as calling ToObject on it, and
 <emu-clause id="to-boolean">
 <h1>ToBoolean ( argument ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-toboolean">7.1.2</a>)</h1>
 
-<strong>Argument type</strong>: `Float32x4`
+<strong>Argument type</strong>: _SIMD_
 <br/>
 <strong>Result</strong>: return ~true~
 
@@ -123,7 +113,7 @@ Even if it would be consistent to return false if it is all zero, there probably
 <emu-clause id="to-number">
 <h1>ToNumber ( argument ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tonumber">7.1.3</a>)</h1>
 
-<strong>Argument type</strong>: `Float32x4`
+<strong>Argument type</strong>: _SIMD_
 </br>
 <strong>Result</strong>: throw a ~TypeError~ exception
 </emu-clause>
@@ -131,46 +121,53 @@ Even if it would be consistent to return false if it is all zero, there probably
 <emu-clause id="to-string">
 <h1>ToString ( argument ) (7.1.12)</h1>
 
-<strong>Argument type</strong>: Float32x4
+<strong>Argument type</strong>: SIMD.Float32x4
 <br/>
-<strong>Result</strong>: Return "SIMD.Float32x4(" + ToString(ExtractLane(argument, 0)) + ", " + ToString(ExtractLane(argument, 1)) + ", " + ToString(ExtractLane(argument, 2)) + ", " + ToString(ExtractLane(argument, 3))  + ")"
+<strong>Result</strong>: Return "SIMD.Float32x4(" + ToString(SIMDExtractLane(argument, 0)) + ", " + ToString(SIMDExtractLane(argument, 1)) + ", " + ToString(SIMDExtractLane(argument, 2)) + ", " + ToString(SIMDExtractLane(argument, 3))  + ")"
 
-<emu-note>An alternative would be to call ToObject and let the wrapper handle ToString the way it works for objects.</emu-note>
+<emu-note>The definition is extended similarly for other SIMD types. An alternative would be to call ToObject and let the wrapper handle ToString the way it works for objects.</emu-note>
 </emu-clause>
 
 <emu-clause id="to-object">
-<h1>ToObject ( argument ) (7.1.13)</h1>
+<h1>ToObject ( argument ) (<a href="Float32x://people.mozilla.org/~jorendorff/es6-draft.html#sec-toobject">7.1.13</a>)</h1>
 
-<strong>Argument type</strong>: Float32x4
+<strong>Argument type</strong>: _SIMD_
 <br/>
-<strong>Result</strong>: Return a new %SIMDFloat32x4% object whose [[Float32x4Data]] internal slot is set to argument. See 27.1 for a description of %SIMDFloat32x4% objects.
+<strong>Result</strong>: Return a new %_SIMD_% wrapper object whose [[SIMDWrapperData]] internal slot is set to _argument_.
 </emu-clause>
 </emu-clause>
 
 <emu-clause id="require-object-coercible">
-<h1>RequireObjectCoercible ( argument ) (7.2.1)</h1>
+<h1>RequireObjectCoercible ( argument ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-requireobjectcoercible">7.2.1</a>)</h1>
 
-<strong>Argument type</strong>: Float32x4
+<strong>Argument type</strong>: _SIMD_
 <br/>
 <strong>Result</strong>: return argument
 </emu-clause>
 
 <emu-clause id="same-value">
-<h1>SameValue(x, y) (7.2.9)</h1>
+<h1>SameValue(x, y) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevalue">7.2.9</a>)</h1>
 Add an extra step at the bottom of the definition of SameValue for the new case involving the new type:
 <emu-alg>
-11. If Type(x) is Float32x4, then
-  1. If SameValue(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValue(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValue(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValue(x.[[Float32x4W]], y.[[Float32x4W]]), return true, otherwise return false
+11. For each SIMD type _SIMD_:
+  1. If Type(x) is _SIMD_:
+    1. Assert Type(y) is _SIMD_.
+    1. For _i_ from 0 to _SIMD_.[[SIMDLength]] - 1:
+      1. If SameValue(SIMDExtractLane(_x_, _i_), SIMDExtractLane(_y_, _i_)) is ~false~, return ~false~.
+    1. return ~true~
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="same-value-zero">
 <h1>SameValueZero(x, y) (7.2.10)</h1>
-Add an extra step at the bottom of the definition of SameValue for the new case involving the new type:
+Add an extra step at the bottom of the definition of SameValueZero for the new case involving the new type:
 <emu-alg>
-11. If Type(x) is Float32x4, then
-  1. Assert: Type(y) is Float32x4
-  1. If SameValueZero(x.[[Float32x4X]], y.[[Float32x4X]]) and SameValueZero(x.[[Float32x4Y]], y.[[Float32x4Y]]) and SameValueZero(x.[[Float32x4Z]], y.[[Float32x4Z]]) and SameValueZero(x.[[Float32x4W]], y.[[Float32x4W]]), return ~true~, otherwise return ~false~
+11. For each SIMD type _SIMD_:
+  1. If Type(x) is _SIMD_:
+    1. Assert Type(y) is _SIMD_.
+    1. For _i_ from 0 to _SIMD_.[[SIMDLength]] - 1:
+      1. If SameValueZero(SIMDExtractLane(_x_, _i_), SIMDExtractLane(_y_, _i_)) is ~false~, return ~false~.
+    1. return ~true~
 </emu-alg>
 </emu-clause>
 
@@ -191,9 +188,12 @@ Replace step 10 with the following:
 <h1>Strict Equality Comparison (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-strict-equality-comparison">7.2.13</a>)</h1>
 Add a new step 9, before the existing step 9:
 <emu-alg>
-9. If Type(x) is Float32x4, then
-  1. If x.[[Float32x4X]] === y.[[Float32x4X]] and x.[[Float32x4Y]] === y.[[Float32x4Y]] and x.[[Float32x4Z]] === y.[[Float32x4Z]] and x.[[Float32x4W]] === y.[[Float32x4W]], return true
-  1. Else, return false
+9. For each SIMD type _SIMD_:
+  1. If Type(x) is _SIMD_:
+    1. Assert Type(y) is _SIMD_.
+    1. For _i_ from 0 to _SIMD_.[[SIMDLength]] - 1:
+      1. If SIMDExtractLane(_x_, _i_) === SIMDExtractLane(_y_, _i_) is ~false~, return ~false~.
+    1. return ~true~
 </emu-alg>
 </emu-clause>
 </emu-clause>
@@ -206,15 +206,7 @@ Add a new step 9, before the existing step 9:
 <strong>Type of val</strong>: Float32x4
 <br/>
 <strong>Result</strong>: "float32x4"
-</emu-clause>
-</emu-clause>
-
-<emu-clause id="constructor-global">
-<h1>Constructor properties of the global object (18.3)</h1>
-<emu-clause id="constructor-global-float32x4">
-<h1>Float32x4 (18.3.34)</h1>
-
-See <a href="#simd-float32x4">27.1</a>
+<emu-note>This applies similarly for other SIMD types, using the lower-cased version of the constructor/type name as the typeof. This follows the pattern for Number ("number"), Boolean ("boolean"), etc.
 </emu-clause>
 </emu-clause>
 
@@ -290,66 +282,66 @@ This internal algorithm creates a new value of the type corresponding to the spe
 </emu-clause>
 
 <emu-clause id="simd-constructor">
-<h1>_SIMDConstructor_</h1>
-For each SIMD constructor, certain behaviors are in common. When _SIMDConstructor_ occurs in the following text, substitute that for each of the SIMD types, namely Float32x4, Int32x4, Int16x8, Int8x16, and Float64x2. The only difference between these types/constructors is the values of the four internal fields of the SIMD constructors enumerated above, and described for each constructor in the following section.
-
+<h1>_SIMD_</h1>
+For each SIMD constructor, certain behaviors are in common. When _SIMD_ occurs in this following text, substitute that for each of the SIMD types, namely Float32x4, Int32x4, Int16x8, Int8x16, and Float64x2. The only difference between these types/constructors is the values of the four internal fields of the SIMD constructors enumerated above, and described for each constructor in the following section. Similarly to Number, _SIMD_ is used to refer to both the type (spec-internally) <em>and</em> the wrapper constructor object.
+To reduce ambiguity between the actual value and the binding on the global object, it may be referred to as %_SIMD_% to be clear that the reference is to the initial value.
 <emu-note>
-As with Boolean, String, etc, _SIMDConstructor_ is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function. To reduce ambiguity between the actual value and the binding on the global object, it may be referred to as %_SIMDConstructor_% to be clear that the reference is to the initial value.
+As with Boolean, String, etc, _SIMD_ is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function. 
 </emu-note>
 
 <emu-clause id="simd-wrap">
-<h1>_SIMDConstructor_( value )</h1>
+<h1>_SIMD_( value )</h1>
 
 This description applies if the constructor is called with exactly one argument.
 
 <emu-alg>
 1. If ~NewTarget~ is undefined, throw a ~ReferenceError~ (NB: ~TypeError~?).
-1. If value is not of the type _SIMDConstructor_, throw a ~TypeError~.
-1. Let _O_ be OrdinaryCreateFromConstructor(~NewTarget~, "%SIMDFloat32x4Prototype%", «[[Float32x4Data]]» ).
+1. If value is not of the type _SIMD_, throw a ~TypeError~.
+1. Let _O_ be OrdinaryCreateFromConstructor(~NewTarget~, "%_SIMD_Prototype%", «[[SIMDWrapperData]]» ).
 1. ReturnIfAbrupt(_O_).
-1. Set the value of _O_’s [[Float32x4Data]] internal slot to _value_.
+1. Set the value of _O_’s [[SIMDWrapperData]] internal slot to _value_.
 1. Return _O_.
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="simd-create">
-<h1>_SIMDConstructor_( fields... )</h1>
+<h1>_SIMD_( fields... )</h1>
 
 This description applies if the constructor is called with more than one argument.
 
 <emu-alg>
-1. If _SIMDConstructor_.[[SIMDElementsLength]] does not equal Length(fields), throw a TypeError.
-1. Return SIMDCreate(_SIMDConstructor_, fields...).
+1. If _SIMD_.[[SIMDElementsLength]] does not equal Length(fields), throw a TypeError.
+1. Return SIMDCreate(_SIMD_, fields...).
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="simd-add">
-<h1>_SIMDConstructor_.add(a, b)</h1>
+<h1>_SIMD_.add(a, b)</h1>
 <emu-alg>
-1. If _a_.[[Wrapper]] is not _SIMDConstructor_ or _b_.[[Wrapper]] is not _SIMDConstructor_, throw a TypeError.
+1. If _a_.[[Wrapper]] is not _SIMD_ or _b_.[[Wrapper]] is not _SIMD_, throw a TypeError.
 1. Return SIMDAdd(_a_, _b_).
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="simd-extract-lane">
-<h1>_SIMDConstructor_.extractLane(simd, field)</h1>
+<h1>_SIMD_.extractLane(simd, field)</h1>
 <emu-alg>
-1. If _a_.[[Wrapper]] is not _SIMDConstructor_, throw a TypeError.
+1. If _a_.[[Wrapper]] is not _SIMD_, throw a TypeError.
 1. Return SIMDExtractLane(_simd_, _field_).
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="simd-proto">
-<h1>The _SIMDConstructor_.prototype</h1>
+<h1>The _SIMD_.prototype</h1>
 
 <emu-note>
-Previously, if accessors like x were included, these would be spec'd as getters (with null setter) on the _SIMDConstructor_.prototype . However, they have been removed in favor of _SIMDConstructor_.extractLane. Are there any non-trivial properties? Users could add methods like .add() here if they want to use SIMD in an object-oriented way.
+Previously, if accessors like x were included, these would be spec'd as getters (with null setter) on the _SIMD_.prototype . However, they have been removed in favor of _SIMD_.extractLane. Are there any non-trivial properties? Users could add methods like .add() here if they want to use SIMD in an object-oriented way.
 </emu-note>
 
 <emu-clause id="simd-proto-constructor">
-<h1>_SIMDConstructor_.prototype.constructor</h1>
+<h1>_SIMD_.prototype.constructor</h1>
 
-The initial value of _SIMDConstructor_.prototype.constructor is the intrinsic object %_SIMDConstructor_%
+The initial value of _SIMD_.prototype.constructor is the intrinsic object %_SIMD_%
 </emu-clause>
 
 </emu-clause>
@@ -357,8 +349,37 @@ The initial value of _SIMDConstructor_.prototype.constructor is the intrinsic ob
 <emu-clause id="simd-float32x4">
 <h1>SIMD.Float32x4 object</h1>
 The SIMD.Float32x4 intrinsic object has the following hidden slots:
-<li>
-</li>
+<ul>
+<li>[[SIMDLength]]: 4</li>
+<li>[[SIMDElementSize]]: 4</li>
+<li>[[SIMDSerialize]]: SerializeFloat32</li>
+<li>[[SIMDDeserialize]]: DeserializeFloat32</li>
+</ul>
+
+<emu-clause id="serialize-float32">
+<h1>SerializeFloat32( block, offset, n )</h1>
+<emu-note>Derived from part of SetValueInBuffer</emu-note>
+1. Assert: _block_ is a Data Block.
+1. Assert: _offset_ is a number.
+1. Assert: _n_ is a number.
+1. Assert: _offset_ + 4 is less than or equal to the size of _block_.
+1. Set _rawBytes_ to a List containing the 4 bytes that are the result of converting value to IEEE 754-2008 binary32 format using “Round to nearest, ties to even” rounding mode. Bytes are arranged in a consistent endianness for the platform; no API is provided to choose the endian order. If value is ~NaN~, _rawValue_ may be set to any implementation chosen non-signaling ~NaN~ encoding. An implementation must always choose the same non-signaling ~NaN~ encoding for a distinct Not-a-Number value.
+1. Store the individual bytes of _rawBytes_ into _block_, in order, starting at _block_[_offset_].
+</emu-clause>
+
+<emu-clause id="deserialize-float32">
+<h1>DeserializeFloat32( block, offset )</h1>
+<emu-note>Derived from part of SetValueInBuffer</emu-note>
+1. Assert: _block_ is a Data Block.
+1. Assert: _offset_ is a number.
+1. Assert: _offset_ + 4 is less than or equal to the size of _block_.
+1. Let _rawValue_ be a List of 4 containing, in order, the 4 sequence of bytes starting with _block_[_offset_].
+1. Let _value_ be the byte elements of rawValue concatenated and interpreted as a little-endian bit string encoding of an IEEE 754-2008 binary32 value.
+1. If _value_ is an IEEE 754-2008 binary32 ~NaN~ value, return the ~NaN~ Number value.
+1. Return the Number value that corresponds to _value_.
+</emu-clause>
+
+</emu-clause>
 
 <!--
 27.1.1.3 splat

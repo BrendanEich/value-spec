@@ -167,11 +167,11 @@ Even if it would be consistent to return false if it is all zero, there probably
 </emu-clause>
 
 <emu-clause id="to-string">
-<h1>ToString ( argument ) (7.1.12)</h1>
+<h1>ToString ( argument ) (<a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tostring">7.1.12</a>)</h1>
 
 <strong>Argument type</strong>: _SIMD_
 <br/>
-<strong>Result</strong>: Return typeof argument + "(" + `Array.prototype.join.call`(an Array containing the contents of _argument_.[[SIMDElements]]) + ")", for the initial value of `Array.prototype.join` and `Function.prototype.call`
+<strong>Result</strong>: Return `typeof` _argument_ + "(" + `Array.prototype.join.call`(an Array containing the contents of _argument_.[[SIMDElements]]) + ")", for the initial value of `Array.prototype.join` and `Function.prototype.call`
 
 <emu-note>The definition is extended similarly for other SIMD types. An alternative would be to call ToObject and let the wrapper handle ToString the way it works for objects.</emu-note>
 <emu-note>The behavior here is consistent with existing implementations, producing values like "float32x4(1, 2, 3, 4)". An alternative would be to return homoiconic syntax like "SIMD.Float32x4(1, 2, 3, 4)".</emu-note>
@@ -380,10 +380,17 @@ This internal algorithm creates a new value of the type corresponding to the spe
 1. Return SIMDLoad(_block_, _newDescriptor_, 0).
 </emu-alg>
 </emu-clause>
+</emu-clause>
 
 <emu-clause id="simd-constructor">
 <h1>_SIMD_</h1>
-For each SIMD constructor, certain behaviors are in common. When _SIMD_ occurs in this following text, substitute that for each of the SIMD types, namely Float32x4, Float64x2, Int32x4, Int16x8, and Int8x16. The only difference between these types/constructors is the values of the four internal fields of the SIMD constructors enumerated above, and described for each constructor in the following section. Similarly to Number, _SIMD_ is used to refer to both the type (spec-internally) <em>and</em> the wrapper constructor object. To reduce ambiguity between the actual value and the binding on the global object, it may be referred to as %_SIMD_% to be clear that the reference is to the initial value.
+<p>
+For each SIMD constructor, certain behaviors are in common. When _SIMD_ occurs in this following text, substitute that for each of the SIMD types, namely Float32x4, Float64x2, Int32x4, Int16x8, and Int8x16. The only difference between these types/constructors is the values of the four internal fields of the SIMD constructors enumerated above, and described for each constructor in the following section. The definitions of the constructor and properties of the constructor to follow constitute different identities of functions and objects for each of the copies; in a real implementation, they may call out to completely different pieces of code, even if their implementation in the spec is the same.
+</p>
+<p>
+Similarly to Number, _SIMD_ is used to refer to both the type (spec-internally) <em>and</em> the wrapper constructor object. To reduce ambiguity between the actual value and the binding on the global object, it may be referred to as %_SIMD_% to be clear that the reference is to the initial value. The distinction between the type and wrapper object just has to be understood by context, however.
+</p>
+
 <emu-note>
 As with Boolean, String, etc, _SIMD_ is a constructor for the wrapper when invoked with new, and returns a primitive when called as a function. 
 </emu-note>
@@ -442,7 +449,7 @@ Previously, if accessors like x were included, these would be spec'd as getters 
 
 The initial value of _SIMD_.prototype.constructor is the intrinsic object %_SIMD_%
 </emu-clause>
-
+</emu-clause>
 </emu-clause>
 
 <emu-clause id="simd-descriptors">
@@ -660,8 +667,6 @@ The Int8x16 SIMD type descriptor has the following internal slots:
 </emu-clause>
 
 
-</emu-clause>
-</emu-clause>
 </emu-clause>
 </emu-clause>
 </emu-clause>

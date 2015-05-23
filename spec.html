@@ -566,12 +566,12 @@ This property is defined only on SIMD types with floating point values.
 1. If _m_ is ~NaN~, return _n_.
 1. Return `Math.max`(_n_, _m_) for the initial value of `Math.max`.
 </emu-alg>
-<emu-clause>
+</emu-clause>
 
 <emu-clause id="simd-max-num">
+<h1>_SIMD_Constructor.maxNum(a, b)</h1>
 This property is defined only on SIMD types with floating point values.
 <emu-note>In this specification, that includes only Float32x4 and Float64x2</emu-note>
-<h1>_SIMD_Constructor.maxNum(a, b)</h1>
 <emu-alg>
 1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
 1. Return SIMDBinaryOp(_a_, _b_, MaxNum).
@@ -586,12 +586,12 @@ This property is defined only on SIMD types with floating point values.
 1. If _m_ is ~NaN~, return _n_.
 1. Return `Math.min`(_n_, _m_) for the initial value of `Math.min`.
 </emu-alg>
-<emu-clause>
+</emu-clause>
 
 <emu-clause id="simd-min-num">
+<h1>_SIMD_Constructor.minNum(a, b)</h1>
 This property is defined only on SIMD types with floating point values.
 <emu-note>In this specification, that includes only Float32x4 and Float64x2</emu-note>
-<h1>_SIMD_Constructor.minNum(a, b)</h1>
 <emu-alg>
 1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
 1. Return SIMDBinaryOp(_a_, _b_, MinNum).

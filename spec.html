@@ -365,13 +365,26 @@ This internal algorithm creates a new value of the type corresponding to the spe
 <emu-note>While this single definition doesn't explicitly refer to the SIMD type in indexing the list, an implementation may use different representations for the Number elements on different types and generate different code for the accesses.</emu-note>
 </emu-clause>
 
+<emu-clause id="simd-replace-lane" aoid="SIMDReplaceLane">
+<h1>SIMDReplaceLane( value, field, replacement )</h1>
+<emu-alg>
+1. Assert: Type(_value_) is a _SIMD_Type.
+1. Let _descriptor_ be _a_.[[SIMDTypeDescriptor]].
+1. If Type(_field_) is not Number, throw a TypeError
+1. If _field_ != ToInt32(_field_) or _field_ < 0 or _field_ >= _descriptor_.[[SIMDLength]], throw a RangeError.
+1. Let _list_ be a copy of _value_.[[SIMDElements]].
+1. Set <var>list</var>[<var>field</var>] to _replacement_.
+1. Return SIMDCreate(_descriptor_, ..._list_).
+</emu-alg>
+<emu-note>While this single definition doesn't explicitly refer to the SIMD type in indexing the list, an implementation may use different representations for the Number elements on different types and generate different code for the accesses.</emu-note>
+</emu-clause>
+
 <emu-clause id="simd-binary" aoid="SIMDBinaryOp">
 <h1>SIMDBinaryOp( a, b, op )</h1>
 <emu-alg>
 1. Assert: _a_.[[SIMDTypeDescriptor]] is _b_.[[SIMDTypeDescriptor]]
 1. Let _descriptor_ be _a_.[[SIMDTypeDescriptor]].
 1. Let _list_ be a new List of length _descriptor_.[[SIMDLength]].
-1. ReturnIfAbrupt(_block_).
 1. For _i_ from 0 to _descriptor_.[[SIMDLength]],
   1. Let _ax_ = SIMDExtractLane(_a_, _i_).
   1. Let _bx_ = SIMDExtractLane(_b_, _i_).
@@ -468,6 +481,22 @@ This description applies if the constructor is called with more than one argumen
 </emu-alg>
 </emu-clause>
 
+<emu-clause id="simd-check">
+<h1>_SIMD_Constructor.check(a)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return _a_.
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-splat">
+<h1>_SIMD_Constructor.splat(n)</h1>
+<emu-alg>
+1. Let _list_ be a new list of length _SIMD_Descriptor.[[SIMDLength]], with all entries filled with _n_.
+1. Return SIMDCreate(_SIMD_Descriptor, ..._list_).
+</emu-alg>
+</emu-clause>
+
 <emu-clause id="simd-add">
 <h1>_SIMD_Constructor.add(a, b)</h1>
 <emu-alg>
@@ -500,6 +529,22 @@ This description applies if the constructor is called with more than one argumen
 </emu-alg>
 </emu-clause>
 
+<emu-clause id="simd-max">
+<h1>_SIMD_Constructor.max(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return SIMDBinaryOp(_a_, _b_, `Math.max`), for the initial value of `Math.max`.
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-min">
+<h1>_SIMD_Constructor.min(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return SIMDBinaryOp(_a_, _b_, `Math.min`), for the initial value of `Math.min`.
+</emu-alg>
+</emu-clause>
+
 <emu-clause id="simd-neg">
 <h1>_SIMD_Constructor.neg(a, b)</h1>
 <emu-alg>
@@ -508,11 +553,35 @@ This description applies if the constructor is called with more than one argumen
 </emu-alg>
 </emu-clause>
 
+<emu-clause id="simd-sqrt">
+<h1>_SIMD_Constructor.sqrt(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return SIMDUnaryOp(_a_, _b_, `Math.sqrt`), for the initial value of `Math.sqrt`.
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-abs">
+<h1>_SIMD_Constructor.sqrt(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return SIMDUnaryOp(_a_, _b_, `Math.abs`), for the initial value of `Math.abs`.
+</emu-alg>
+</emu-clause>
+
 <emu-clause id="simd-extract-lane">
 <h1>_SIMD_Constructor.extractLane(simd, field)</h1>
 <emu-alg>
 1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
 1. Return SIMDExtractLane(_simd_, _field_).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-replace-lane">
+<h1>_SIMD_Constructor.replaceLane(simd, field)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return SIMDReplaceLane(_simd_, _field_).
 </emu-alg>
 </emu-clause>
 

@@ -539,6 +539,8 @@ This description applies if the constructor is called with more than one argumen
 </emu-clause>
 
 <emu-clause id="simd-max">
+This property is defined only on SIMD types with floating point values.
+<emu-note>In this specification, that includes only Float32x4 and Float64x2</emu-note>
 <h1>_SIMD_Constructor.max(a, b)</h1>
 <emu-alg>
 1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
@@ -547,10 +549,52 @@ This description applies if the constructor is called with more than one argumen
 </emu-clause>
 
 <emu-clause id="simd-min">
+This property is defined only on SIMD types with floating point values.
+<emu-note>In this specification, that includes only Float32x4 and Float64x2</emu-note>
 <h1>_SIMD_Constructor.min(a, b)</h1>
 <emu-alg>
 1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
 1. Return SIMDBinaryOp(_a_, _b_, `Math.min`), for the initial value of `Math.min`.
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="max-num" aoid="MaxNum">
+<h1>MaxNum(n, m)</h1>
+<emu-alg>
+1. Assert Type(_n_) is Number and Type(_m_) is Number.
+1. If _n_ is ~NaN~, return _m_.
+1. If _m_ is ~NaN~, return _n_.
+1. Return `Math.max`(_n_, _m_) for the initial value of `Math.max`.
+</emu-alg>
+<emu-clause>
+
+<emu-clause id="simd-max-num">
+This property is defined only on SIMD types with floating point values.
+<emu-note>In this specification, that includes only Float32x4 and Float64x2</emu-note>
+<h1>_SIMD_Constructor.maxNum(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return SIMDBinaryOp(_a_, _b_, MaxNum).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="min-num" aoid="MinNum">
+<h1>MinNum(n, m)</h1>
+<emu-alg>
+1. Assert Type(_n_) is Number and Type(_m_) is Number.
+1. If _n_ is ~NaN~, return _m_.
+1. If _m_ is ~NaN~, return _n_.
+1. Return `Math.min`(_n_, _m_) for the initial value of `Math.min`.
+</emu-alg>
+<emu-clause>
+
+<emu-clause id="simd-min-num">
+This property is defined only on SIMD types with floating point values.
+<emu-note>In this specification, that includes only Float32x4 and Float64x2</emu-note>
+<h1>_SIMD_Constructor.minNum(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Return SIMDBinaryOp(_a_, _b_, MinNum).
 </emu-alg>
 </emu-clause>
 

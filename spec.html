@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="./elements.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <emu-biblio href="./biblio.json"></emu-biblio>
-<h1>SIMD.js value semantics proposal</h1>
+<h1>SIMD.js specification</h1>
 <emu-intro id="intro">
 <h1>Introduction</h1>
 <p>
@@ -49,9 +49,13 @@ Related links:
 <li>Add all SIMD types, more SIMD operations and all DataView operations.</li>
 </ul>
 </li>
-<li>v0.3: Add more operations, fix some errors and clarify wording. Missing operations:
-<li>Logical and bitwise operations, like lessThan, bool, xor</li>
+<li>v0.3: Add more operations, fix some errors and clarify wording.
+</ul>
+<p>TODO:</p>
+<ul>
+<li>Logical and bitwise operations, like lessThan, bool, xor, a large group of functions.</li>
 <li>Logical casts between types, like SIMD.float32x4.fromInt32x4</li>
+<li>Int64x2 type (requires care because not directly constructable or readable)</li>
 </ul>
 </emu-intro>
 

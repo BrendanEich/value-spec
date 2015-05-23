@@ -365,8 +365,8 @@ This internal algorithm creates a new value of the type corresponding to the spe
 <emu-note>While this single definition doesn't explicitly refer to the SIMD type in indexing the list, an implementation may use different representations for the Number elements on different types and generate different code for the accesses.</emu-note>
 </emu-clause>
 
-<emu-clause id="simd-add" aoid="SIMDAdd">
-<h1>SIMDAdd( a, b )</h1>
+<emu-clause id="simd-binary" aoid="SIMDBinaryOp">
+<h1>SIMDBinaryOp( a, b, op )</h1>
 <emu-alg>
 1. Assert: _a_.[[SIMDTypeDescriptor]] is _b_.[[SIMDTypeDescriptor]]
 1. Let _descriptor_ be _a_.[[SIMDTypeDescriptor]].
@@ -375,9 +375,25 @@ This internal algorithm creates a new value of the type corresponding to the spe
 1. For _i_ from 0 to _descriptor_.[[SIMDLength]],
   1. Let _ax_ = SIMDExtractLane(_a_, _i_).
   1. Let _bx_ = SIMDExtractLane(_b_, _i_).
-  1. Let _sum_ = _ax_ + _bx_.
-  1. Set <var>list</var>[<var>i</var>] to _sum_.
-1. Return the record { [[SIMDTypeDescriptor]]: _descriptor_, [[SIMDElements]]: _list_ }.
+  1. Let _res_ = op(_ax_, _bx_).
+  1. ReturnIfAbrupt(_res_).
+  1. Set <var>list</var>[<var>i</var>] to _res_.
+1. Return SIMDCreate(_descriptor_, ..._list_).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-unary" aoid="SIMDUnaryOp">
+<h1>SIMDUnaryOp( a, op )</h1>
+<emu-alg>
+1. Let _descriptor_ be _a_.[[SIMDTypeDescriptor]].
+1. Let _list_ be a new List of length _descriptor_.[[SIMDLength]].
+1. ReturnIfAbrupt(_block_).
+1. For _i_ from 0 to _descriptor_.[[SIMDLength]],
+  1. Let _ax_ = SIMDExtractLane(_a_, _i_).
+  1. Let _res_ = op(_ax_).
+  1. ReturnIfAbrupt(_res_).
+  1. Set <var>list</var>[<var>i</var>] to _res_.
+1. Return SIMDCreate(_descriptor_, .._list_).
 </emu-alg>
 </emu-clause>
 
@@ -460,7 +476,39 @@ This description applies if the constructor is called with more than one argumen
 <h1>_SIMD_.add(a, b)</h1>
 <emu-alg>
 1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_ or _b_.[[SIMDTypeDescriptor]] is not _SIMD_, throw a TypeError.
-1. Return SIMDAdd(_a_, _b_).
+1. Return SIMDBinaryOp(_a_, _b_, <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-applying-the-additive-operators-to-numbers">+</a>).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-sub">
+<h1>_SIMD_.sub(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_ or _b_.[[SIMDTypeDescriptor]] is not _SIMD_, throw a TypeError.
+1. Return SIMDBinaryOp(_a_, _b_, <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-applying-the-additive-operators-to-numbers">-</a>).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-mul">
+<h1>_SIMD_.mul(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_ or _b_.[[SIMDTypeDescriptor]] is not _SIMD_, throw a TypeError.
+1. Return SIMDBinaryOp(_a_, _b_, <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-applying-the-mul-operator">*</a>).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-div">
+<h1>_SIMD_.div(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_ or _b_.[[SIMDTypeDescriptor]] is not _SIMD_, throw a TypeError.
+1. Return SIMDBinaryOp(_a_, _b_, <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-applying-the-div-operator">/</a>).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-neg">
+<h1>_SIMD_.neg(a, b)</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_, throw a TypeError.
+1. Return SIMDUnaryOp(_a_, _b_, <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-unary-minus-operator-runtime-semantics-evaluation">-</a>).
 </emu-alg>
 </emu-clause>
 
@@ -586,7 +634,6 @@ The Float64x2 SIMD type descriptor has the following internal slots:
 1. Set _rawBytes_ to a List containing the 8 bytes that are the result of converting value to IEEE 754-2008 binary64 format using “Round to nearest, ties to even” rounding mode. If _isLittleEndian_ is ~false~, the bytes are arranged in big endian order. Otherwise, the bytes are arranged in little endian order. If value is ~NaN~, _rawValue_ may be set to any implementation chosen non-signaling ~NaN~ encoding. An implementation must always choose the same non-signaling ~NaN~ encoding for a distinct Not-a-Number value.
 1. Store the individual bytes of _rawBytes_ into _block_, in order, starting at <var>block</var>[<var>offset</var>].
 </emu-alg>
-<emu-note>
 </emu-clause>
 
 <emu-clause id="deserialize-float64" aoid="DeserializeFloat64">

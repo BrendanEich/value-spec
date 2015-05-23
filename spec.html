@@ -492,7 +492,7 @@ This description applies if the constructor is called with more than one argumen
 <emu-clause id="simd-splat">
 <h1>_SIMD_Constructor.splat(n)</h1>
 <emu-alg>
-1. Let _list_ be a new list of length _SIMD_Descriptor.[[SIMDLength]], with all entries filled with _n_.
+1. Let _list_ be a new List of length _SIMD_Descriptor.[[SIMDLength]], with all entries filled with _n_.
 1. Return SIMDCreate(_SIMD_Descriptor, ..._list_).
 </emu-alg>
 </emu-clause>
@@ -621,6 +621,7 @@ In this definition, _TIMD_ ranges over all SIMD types for which _SIMD_Descriptor
 1. If _value_.[[SIMDTypeDescriptor]] is not _TIMD_Descriptor, throw a TypeError.
 1. Return SIMDReinterpretCast(_value_, _SIMD_Descriptor).
 </emu-alg>
+</emu-clause>
 </emu-clause>
 
 <emu-clause id="simd-proto">

@@ -49,6 +49,10 @@ Related links:
 <li>Add all SIMD types, more SIMD operations and all DataView operations.</li>
 </ul>
 </li>
+<li>v0.3: Add more operations, fix some errors and clarify wording. Missing operations:
+<li>Logical and bitwise operations, like lessThan, bool, xor</li>
+<li>{load,store}[123]</li>
+<li>Logical casts between types, like SIMD.float32x4.fromInt32x4</li>
 </ul>
 </emu-intro>
 
@@ -411,23 +415,25 @@ This internal algorithm creates a new value of the type corresponding to the spe
 </emu-clause>
 
 <emu-clause id="simd-load" aoid="SIMDLoad">
-<h1>SIMDLoad( dataBlock, descriptor, byteOffset )</h1>
+<h1>SIMDLoad( dataBlock, descriptor, byteOffset [, length] )</h1>
 <emu-alg>
 1. Assert: _dataBlock_ is a Data Block, _descriptor_ is a SIMD type descriptor
-1. Assert: _byteOffset_ is an integer greater than or equal to zero, and less than or equal to the size of _dataBlock_ - _descriptor_.[[SIMDElementSize]] * _descriptor_.[[SIMDLength]].
-1. Let _list_ be a List of length _descriptor_.[[SIMDLength]].
-1. For _i_ from 0 to _descriptor_.[[SIMDLength]] - 1,
+1. If _length_ is not provided, let _length_ be _descriptor_.[[SIMDLength]]. Otherwise, assert _length_ <= _descriptor_.[[SIMDLength]].
+1. Assert: _byteOffset_ is an integer greater than or equal to zero, and less than or equal to the size of _dataBlock_ - _descriptor_.[[SIMDElementSize]] * _length_.
+1. Let _list_ be a List of length _descriptor_.[[SIMDLength]], initialized to all 0.
+1. For _i_ from 0 to _length_ - 1,
   1. Set <var>list</var>[<var>i</var>] to <var>descriptor</var>.[[SIMDDeserializeElement]](<var>dataBlock</var>, _byteOffset_).
 1. Return the record { [[SIMDTypeDescriptor]]: _descriptor_, [[SIMDElements]]: _list_ }.
 </emu-alg>
 </emu-clause>
 
 <emu-clause id="simd-store" aoid="SIMDStore">
-<h1>SIMDStore( dataBlock, descriptor, byteOffset, n )</h1>
+<h1>SIMDStore( dataBlock, descriptor, byteOffset, n [, length] )</h1>
 <emu-alg>
 1. Assert: _dataBlock_ is a Data Block, _descriptor_ is a SIMD type descriptor
-1. Assert: _byteOffset_ is an integer greater than or equal to zero, and less than or equal to the size of _dataBlock_ - _descriptor_.[[SIMDElementSize]] * _descriptor_.[[SIMDLength]].
-1. For _i_ from 0 to _descriptor_.[[SIMDLength]] - 1,
+1. If _length_ is not provided, let _length_ be _descriptor_.[[SIMDLength]]. Otherwise, assert _length_ <= _descriptor_.[[SIMDLength]].
+1. Assert: _byteOffset_ is an integer greater than or equal to zero, and less than or equal to the size of _dataBlock_ - _descriptor_.[[SIMDElementSize]] * _length_.
+1. For _i_ from 0 to _length_,
   1. <var>descriptor</var>.[[SIMDSerializeElement]](<var>dataBlock</var>, _byteOffset_ + _i_ * _descriptor_.[[SIMDElementSize]], <var>n</var>.[[SIMDElements]][<var>i</var>]).
 </emu-alg>
 </emu-clause>
@@ -680,8 +686,9 @@ This property is defined only on SIMD types with floating point values.
 
 <emu-clause id="simd-store-function">
 <h1>_SIMD_Constructor.store(tarray, index, simd)</h1>
+<emu-note>The first seven steps of the following `store`/`load` functions are very similar. A refactoring could reduce the spec size.</emu-note>
 <emu-alg>
-1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. If _simd_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
 1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
 1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
 1. If _index_ != ToInt32(_index_), throw a TypeError.
@@ -692,10 +699,57 @@ This property is defined only on SIMD types with floating point values.
 </emu-alg>
 </emu-clause>
 
+<emu-clause id="simd-store1">
+<h1>_SIMD_Constructor.store1(tarray, index, simd)</h1>
+This function is defined only on SIMD types where _SIMD_Descriptor.[[SIMDLength]] <= 4.
+<emu-note>In this specification, that set consists of Float32x4, Int32x4, and Float64x2.</emu-note>
+<emu-alg>
+1. If _simd_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_Descriptor.[[SIMDElementSize]] > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. SIMDStore(_block_, _SIMD_Descriptor, _byteIndex_, _simd_, 1).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-store2">
+<h1>_SIMD_Constructor.store2(tarray, index, simd)</h1>
+This function is defined only on SIMD types where _SIMD_Descriptor.[[SIMDLength]] == 4.
+<emu-note>In this specification, that set consists of Float32x4 and Int32x4.</emu-note>
+<emu-alg>
+1. If _simd_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_Descriptor.[[SIMDElementSize]] * 2 > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. SIMDStore(_block_, _SIMD_Descriptor, _byteIndex_, _simd_, 2).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-store3">
+<h1>_SIMD_Constructor.store3(tarray, index)</h1>
+This function is defined only on SIMD types where _SIMD_Descriptor.[[SIMDLength]] == 4.
+<emu-note>In this specification, that set consists of Float32x4 and Int32x4.</emu-note>
+<emu-alg>
+1. If _simd_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_Descriptor.[[SIMDElementSize]] * 3 > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. Return SIMDStore(_block_, _SIMD_Descriptor, _byteIndex_, 3).
+</emu-alg>
+</emu-clause>
+
 <emu-clause id="simd-load-function">
 <h1>_SIMD_Constructor.load(tarray, index)</h1>
 <emu-alg>
-1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
 1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
 1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
 1. If _index_ != ToInt32(_index_), throw a TypeError.
@@ -703,6 +757,51 @@ This property is defined only on SIMD types with floating point values.
 1. Let _byteIndex_ be _index_ * _elementLength_.
 1. If _byteIndex_ + _SIMD_Descriptor.[[SIMDElementSize]] * _SIMD_Descriptor.[[SIMDLength]] > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
 1. Return SIMDLoad(_block_, _SIMD_Descriptor, _byteIndex_).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-load1">
+<h1>_SIMD_Constructor.load1(tarray, index)</h1>
+This function is defined only on SIMD types where _SIMD_Descriptor.[[SIMDLength]] <= 4.
+<emu-note>In this specification, that set consists of Float32x4, Int32x4, and Float64x2.</emu-note>
+<emu-alg>
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_Descriptor.[[SIMDElementSize]] > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. Return SIMDLoad(_block_, _SIMD_Descriptor, _byteIndex_, 1).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-load2">
+<h1>_SIMD_Constructor.load2(tarray, index)</h1>
+This function is defined only on SIMD types where _SIMD_Descriptor.[[SIMDLength]] == 4.
+<emu-note>In this specification, that set consists of Float32x4 and Int32x4.</emu-note>
+<emu-alg>
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_Descriptor.[[SIMDElementSize]] * 2 > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. Return SIMDLoad(_block_, _SIMD_Descriptor, _byteIndex_, 2).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-load3">
+<h1>_SIMD_Constructor.load3(tarray, index)</h1>
+This function is defined only on SIMD types where _SIMD_Descriptor.[[SIMDLength]] == 4.
+<emu-note>In this specification, that set consists of Float32x4 and Int32x4.</emu-note>
+<emu-alg>
+1. If _tarray_ does not have a [[ViewedArrayBuffer]] internal slot, throw a TypeError.
+1. Let _block_ be _tarray_.[[ViewedArrayBuffer]].[[ArrayBufferData]]
+1. If _index_ != ToInt32(_index_), throw a TypeError.
+1. Let _elementLength_ be _tarray_.[[ByteLength]] / _tarray.[[ArrayLength]].
+1. Let _byteIndex_ be _index_ * _elementLength_.
+1. If _byteIndex_ + _SIMD_Descriptor.[[SIMDElementSize]] * 3 > _tarray_.[[ByteLength]] or _byteIndex_ < 0, throw a RangeError.
+1. Return SIMDLoad(_block_, _SIMD_Descriptor, _byteIndex_, 3).
 </emu-alg>
 </emu-clause>
 

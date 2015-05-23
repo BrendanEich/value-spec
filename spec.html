@@ -867,6 +867,24 @@ Previously, if accessors like x were included, these would be spec'd as getters 
 
 The initial value of _SIMD_Constructor.prototype.constructor is the intrinsic object %_SIMD_Constructor%
 </emu-clause>
+
+<emu-clause id="simd-prototype-valueof">
+<h1>_SIMD_Constructor.prototype.valueOf()</h1>
+<emu-alg>
+1. If ~this~ does not have a [[SIMDWrapperData]] internal slot, throw a ~TypeError~.
+1. Return ~this~.[[SIMDWrapperData]].
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-prototype-tostring">
+<h1>_SIMD_Constructor.prototype.toString()</h1>
+<emu-alg>
+1. If ~this~ does not have a [[SIMDWrapperData]] internal slot, throw a ~TypeError~.
+1. Return ToString(~this~.[[SIMDWrapperData]]).
+</emu-alg>
+<emu-note>This definition depends on the primitive _SIMD_Type's behavior under ToString. Alternatively, _SIMD_Type could have ToString defined by calling ToObject and then reaching this method (or whatever the user overrides it with), in which case the current definition in ToString would be brought down here.</emu-note>
+</emu-clause>
+
 </emu-clause>
 
 <emu-clause id="simd-descriptors">

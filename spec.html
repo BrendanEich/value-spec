@@ -614,7 +614,7 @@ This description applies if the constructor is called with more than one argumen
 </emu-clause>
 
 <emu-clause id="simd-to-timd">
-<h1></var>SIMD</var>Constructor.from<var>TIMD</var>Bits( value )</h1>
+<h1><var>SIMD</var>Constructor.from<var>TIMD</var>Bits( value )</h1>
 In this definition, _TIMD_ ranges over all SIMD types for which _SIMD_Descriptor.[[SIMDElementSize]] * _SIMD_Descriptor.[[SIMDLength]] == _TIMD_Descriptor.[[SIMDElementSize]] * _TIMD_Descriptor.[[SIMDLength]].
 <emu-note>All of the SIMD types described in this spec are 16 bytes, so all pairs are included.</emu-note>
 <emu-alg>
@@ -622,6 +622,42 @@ In this definition, _TIMD_ ranges over all SIMD types for which _SIMD_Descriptor
 1. Return SIMDReinterpretCast(_value_, _SIMD_Descriptor).
 </emu-alg>
 </emu-clause>
+
+<emu-clause id="swizzle">
+<h1>_SIMD_.swizzle( a, lanes... )</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a ~TypeError~.
+1. If the length of _lanes_ does not equal _SIMD_Descriptor.[[SIMDLength]], throw a ~TypeError~.
+1. For each _lane_ in _lanes_:
+  1. If _lane_ is not a Number, or _lane_ != ToInt32(_lane_), throw a ~TypeError~.
+  1. If _lane_ < 0 or _lane_ >= _SIMD_Descriptor.[[SIMDLength]], throw a ~RangeError~.
+1. Let _list_ be a new List of length _SIMD_Descriptor.[[SIMDLength]].
+1. For _i_ in from 0 to _SIMD_Descriptor.[[SIMDLength]] - 1,
+  1. Set <var>list</var>[<var>i</var>] to SIMDExtractLane(_a_, <var>lanes</var>[<var>i</var>])
+1. Return SIMDCreate(_SIMD_Descriptor, ..._list_).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="shuffle">
+<h1>_SIMD_.shuffle( a, b, lanes... )</h1>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, or if _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a ~TypeError~.
+1. If the length of _lanes_ does not equal _SIMD_Descriptor.[[SIMDLength]] * 2, throw a ~TypeError~.
+1. For each _lane_ in _lanes_:
+  1. If _lane_ is not a Number, or _lane_ != ToInt32(_lane_), throw a ~TypeError~.
+  1. If _lane_ < 0 or _lane_ >= _SIMD_Descriptor.[[SIMDLength]] * 2, throw a ~RangeError~.
+1. Let _list_ be a new List of length _SIMD_Descriptor.[[SIMDLength]].
+1. For _i_ in from 0 to _SIMD_Descriptor.[[SIMDLength]] - 1,
+  1. Let _idx_ be <var>lanes</var>[<var>i</var>].
+  1. If _idx_ >= _SIMD_Descriptor.[[SIMDLength]],
+    1. Set <var>list</var>[<var>i</var>] to SIMDExtractLane(_b_, <var>lanes</var>[<var>i</var>] - _SIMD_Descriptor.[[SIMDLength]])
+  1. Otherwise,
+    1. Set <var>list</var>[<var>i</var>] to SIMDExtractLane(_a_, <var>lanes</var>[<var>i</var>])
+1. Return SIMDCreate(_SIMD_Descriptor, ..._list_).
+</emu-alg>
+</emu-clause>
+
+
 </emu-clause>
 
 <emu-clause id="simd-proto">

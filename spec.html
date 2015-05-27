@@ -57,6 +57,8 @@ Related links:
 <p>TODO:</p>
 <ul>
 <li>Logical casts between types, like SIMD.float32x4.fromInt32x4</li>
+<li>Less exact definition for reciprocalApproximation, reciprocalSqrtApproximation</li>
+<li>Define Int64x2 type better</li>
 </ul>
 </emu-intro>
 
@@ -990,7 +992,7 @@ This is defined on integer SIMD types.
 </emu-clause>
 
 <emu-clause id="simd-select">
-<h1>_SIMD_Constructor.select( a, b, selector )</h1>
+<h1>_SIMD_Constructor.select( selector, a, b )</h1>
 <emu-alg>
 1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
 1. Let _outputDescriptor_ be SIMDIntType(_SIMD_Descriptor).
@@ -999,6 +1001,23 @@ This is defined on integer SIMD types.
 1. For _i_ from 0 to _SIMD_Descriptor.[[SIMDLength]] - 1,
   1. If SIMDToBoolean(<var>sector</var>.[[SIMDElements]][<var>i</var>]) is ~true~, let <var>list</var>[<var>i</var>] be <var>a</var>.[[SIMDElements]][<var>i</var>].
   1. Otherwise, let <var>list</var>[<var>i</var>] be <var>b</var>.[[SIMDElements]][<var>i</var>].
+1. Return SIMDCreate(_SIMD_Descriptor, ..._list_).
+</emu-alg>
+</emu-clause>
+
+<emu-clause id="simd-select-bits">
+<h1>_SIMD_Constructor.selectBits( selector, a, b )</h1>
+<p>
+This definition refers to the definitions of &, | and ~ from ES2015 <!-- TODO: cross-reference -->
+</p>
+<p>
+This operation is only defined on integer SIMD types.
+</p>
+<emu-alg>
+1. If _a_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor or _b_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, or _selector_.[[SIMDTypeDescriptor]] is not _SIMD_Descriptor, throw a TypeError.
+1. Let _list_ be a new List.
+1. For _i_ from 0 to _SIMD_Descriptor.[[SIMDLength]] - 1,
+  1. Let <var>list</var>[<var>i</var>] be (<var>a</var>.[[SIMDElements]][<var>i</var>] & <var>selector</var>.[[SIMDElements]][<var>i</var>]) | (<var>b</var>.[[SIMDElements]][<var>i</var>] & ~<var>selector</var>.[[SIMDElements]][<var>i</var>]).
 1. Return SIMDCreate(_SIMD_Descriptor, ..._list_).
 </emu-alg>
 </emu-clause>

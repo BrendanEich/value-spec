@@ -1388,6 +1388,23 @@ The initial value of _SIMD_Constructor.prototype.constructor is the intrinsic ob
 </emu-alg>
 </emu-clause>
 
+<emu-clause id="simd-prototype-tolocalestring">
+<h1>_SIMD_Constructor.prototype.toLocaleString()</h1>
+<emu-alg>
+1. If ~this~ does not have a [[SIMDWrapperData]] internal slot, throw a ~TypeError~.
+1. Let _separator_ be the String value for the list-separator String appropriate for the host environment’s current locale (this is derived in an implementation-defined way).
+1. Let _list_ be an empty List
+1. For each element _element_ in _argument_.[[SIMDElements]],
+  1. Let _R_ be ToString(Invoke(_element_, "toLocaleString")).
+  1. ReturnIfAbrupt(_R_).
+  1. Append _R_ to _list_.
+1. Let _results_ be an Array containing the contents of _list_.
+1. Let _t_ be the result of evaluating `typeof` _argument_.
+1. Let _e_ be Call(%ArrayPrototype_join%, _results_, «_separator_»).
+1. Return a new String value computed by concatenating the previous value of _t_, "(", _e_, and ")".
+</emu-alg>
+</emu-clause>
+
 <emu-clause id="simd-prototype-tostring">
 <h1>_SIMD_Constructor.prototype.toString()</h1>
 <emu-alg>
